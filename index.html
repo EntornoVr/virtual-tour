@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tour Virtual 360 - Hotspots Personalizados</title>
+    <title>Tour Virtual 360</title>
+    <!-- CSS de Pannellum -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.css"/>
+    <!-- JavaScript de Pannellum -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.js"></script>
     <style>
         body {
@@ -25,43 +27,6 @@
             padding: 5px 15px;
             border-radius: 20px;
         }
-        
-        /* Estilos personalizados para hotspots */
-        .hotspot-flecha-roja {
-            background-image: url('https://entornovr.github.io/virtual-tour/imagenes/tipos-de-hotspot/Flecharoja.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 40px;
-            height: 40px;
-            border: none;
-            background-color: transparent;
-        }
-        
-        .hotspot-flecha-roja:hover {
-            transform: scale(1.2);
-            transition: transform 0.3s ease;
-        }
-        
-        /* Estilo para tooltip personalizado */
-        .custom-tooltip {
-            position: absolute;
-            top: -40px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 14px;
-            white-space: nowrap;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .tooltip-visible {
-            opacity: 1;
-        }
     </style>
 </head>
 <body>
@@ -71,22 +36,6 @@
     <div id="panorama"></div>
     
     <script>
-        // Función para crear tooltips personalizados
-        function createCustomTooltip(hotSpotDiv, args) {
-            var tooltipSpan = document.createElement('span');
-            tooltipSpan.innerHTML = args.text;
-            tooltipSpan.classList.add('custom-tooltip');
-            hotSpotDiv.appendChild(tooltipSpan);
-            
-            hotSpotDiv.addEventListener('mouseenter', function() {
-                tooltipSpan.classList.add('tooltip-visible');
-            });
-            
-            hotSpotDiv.addEventListener('mouseleave', function() {
-                tooltipSpan.classList.remove('tooltip-visible');
-            });
-        }
-        
         // Configuración del visor
         pannellum.viewer('panorama', {
             default: {
@@ -97,9 +46,9 @@
             
             scenes: {
                 escena1: {
-                    title: 'Entrada Principal',
+                    title: 'Escena 1',
                     type: 'equirectangular',
-                    panorama: 'https://entornovr.github.io/virtual-tour/imagenes/escena1.jpg',
+                    panorama: 'imagenes/escena1.jpg',
                     compass: true,
                     northOffset: 247.5,
                     hotSpots: [
@@ -108,9 +57,7 @@
                             yaw: 37.1,
                             type: 'scene',
                             text: 'Ir al Salón',
-                            sceneId: 'escena2',
-                            cssClass: 'hotspot-flecha-roja',
-                            createTooltipFunc: createCustomTooltip
+                            sceneId: 'escena2'
                         },
                         {
                             pitch: -2.1,
@@ -122,27 +69,23 @@
                 },
                 
                 escena2: {
-                    title: 'Salón',
+                    title: 'Escena 2',
                     type: 'equirectangular',
-                    panorama: 'https://entornovr.github.io/virtual-tour/imagenes/escena2.jpg',
+                    panorama: 'imagenes/escena2.jpg',
                     hotSpots: [
                         {
                             pitch: 1.2,
                             yaw: 197.6,
                             type: 'scene',
                             text: 'Volver a la Entrada',
-                            sceneId: 'escena1',
-                            cssClass: 'hotspot-flecha-roja',
-                            createTooltipFunc: createCustomTooltip
+                            sceneId: 'escena1'
                         },
                         {
                             pitch: -1.8,
                             yaw: 120.4,
                             type: 'scene',
                             text: 'Ir a la Cocina',
-                            sceneId: 'escena3',
-                            cssClass: 'hotspot-flecha-roja',
-                            createTooltipFunc: createCustomTooltip
+                            sceneId: 'escena3'
                         }
                     ]
                 },
@@ -150,16 +93,14 @@
                 escena3: {
                     title: 'Cocina',
                     type: 'equirectangular',
-                    panorama: 'https://entornovr.github.io/virtual-tour/imagenes/escena3.jpg',
+                    panorama: 'imagenes/escena3.jpg',
                     hotSpots: [
                         {
                             pitch: 0.5,
                             yaw: 304.2,
                             type: 'scene',
                             text: 'Volver al Salón',
-                            sceneId: 'escena2',
-                            cssClass: 'hotspot-flecha-roja',
-                            createTooltipFunc: createCustomTooltip
+                            sceneId: 'escena2'
                         }
                     ]
                 }
