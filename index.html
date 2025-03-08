@@ -27,6 +27,14 @@
             padding: 5px 15px;
             border-radius: 20px;
         }
+        /* Clase CSS personalizada para el hotspot */
+        .custom-hotspot {
+            width: 32px; /* Ancho del hotspot */
+            height: 32px; /* Alto del hotspot */
+            background-image: url('https://entornovr.github.io/virtual-tour/imagenes/tipos-de-hotspot/Flecharoja.png'); /* Ruta de la imagen */
+            background-size: cover; /* Ajusta la imagen al tamaño del hotspot */
+            cursor: pointer; /* Cambia el cursor al pasar sobre el hotspot */
+        }
     </style>
 </head>
 <body>
@@ -57,13 +65,15 @@
                             yaw: 37.1,
                             type: 'scene',
                             text: 'Ir al Salón',
-                            sceneId: 'escena2'
+                            sceneId: 'escena2',
+                            cssClass: 'custom-hotspot' /* Aplica la clase personalizada */
                         },
                         {
                             pitch: -2.1,
                             yaw: 5.4,
                             type: 'info',
-                            text: 'Información sobre la entrada'
+                            text: 'Información sobre la entrada',
+                            cssClass: 'custom-hotspot' /* Aplica la clase personalizada */
                         }
                     ]
                 },
@@ -78,14 +88,16 @@
                             yaw: 197.6,
                             type: 'scene',
                             text: 'Volver a la Entrada',
-                            sceneId: 'escena1'
+                            sceneId: 'escena1',
+                            cssClass: 'custom-hotspot' /* Aplica la clase personalizada */
                         },
                         {
                             pitch: -1.8,
                             yaw: 120.4,
                             type: 'scene',
                             text: 'Ir a la Cocina',
-                            sceneId: 'escena3'
+                            sceneId: 'escena3',
+                            cssClass: 'custom-hotspot' /* Aplica la clase personalizada */
                         }
                     ]
                 },
@@ -100,7 +112,8 @@
                             yaw: 304.2,
                             type: 'scene',
                             text: 'Volver al Salón',
-                            sceneId: 'escena2'
+                            sceneId: 'escena2',
+                            cssClass: 'custom-hotspot' /* Aplica la clase personalizada */
                         }
                     ]
                 }
