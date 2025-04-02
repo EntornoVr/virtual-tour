@@ -2,9 +2,7 @@
 <html>
 <head>
     <title>Tour Virtual 360</title>
-    <!-- CSS de Pannellum -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.css"/>
-    <!-- JavaScript de Pannellum -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.js"></script>
     <style>
         body {
@@ -27,31 +25,41 @@
             padding: 5px 15px;
             border-radius: 20px;
         }
-        /* Clase CSS personalizada para el hotspot */
         .custom-hotspot {
-            width: 50px; /* Ancho del hotspot */
-            height: 50px; /* Alto del hotspot */
-            background-image: url('https://entornovr.github.io/virtual-tour/imagenes/tipos-de-hotspot/Flecharoja.png'); /* Ruta de la imagen */
-            background-size: cover; /* Ajusta la imagen al tamaño del hotspot */
-            cursor: pointer; /* Cambia el cursor al pasar sobre el hotspot */
+            width: 50px;
+            height: 50px;
+            background-image: url('https://entornovr.github.io/virtual-tour/imagenes/tipos-de-hotspot/Flecharoja.png');
+            background-size: cover;
+            cursor: pointer;
+        }
+        /* Estilos para el botón de control del acelerómetro */
+        .pnlm-controls .pnlm-motion-ctrl-toggle {
+            width: 60px !important;
+            height: 60px !important;
+            font-size: 30px !important;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     </style>
 </head>
 <body>
     <div class="title-overlay">Test Tour Virtual 360</div>
-    
-    <!-- Contenedor para la panorámica -->
     <div id="panorama"></div>
-    
     <script>
-        // Configuración del visor
         pannellum.viewer('panorama', {
             default: {
                 firstScene: 'escena1',
                 sceneFadeDuration: 1000,
                 autoLoad: true
             },
-            
+            motionControls: true, // Habilita el acelerómetro
             scenes: {
                 escena1: {
                     title: 'Escena 1',
@@ -66,18 +74,17 @@
                             type: 'scene',
                             text: 'Ir al Salón',
                             sceneId: 'escena2',
-                            cssClass: 'custom-hotspot' /* Aplica la clase personalizada */
+                            cssClass: 'custom-hotspot'
                         },
                         {
                             pitch: -2.1,
                             yaw: 5.4,
                             type: 'info',
                             text: 'Información sobre la entrada',
-                            cssClass: 'custom-hotspot' /* Aplica la clase personalizada */
+                            cssClass: 'custom-hotspot'
                         }
                     ]
                 },
-                
                 escena2: {
                     title: 'Escena 2',
                     type: 'equirectangular',
@@ -89,7 +96,7 @@
                             type: 'scene',
                             text: 'Volver a la Entrada',
                             sceneId: 'escena1',
-                            cssClass: 'custom-hotspot' /* Aplica la clase personalizada */
+                            cssClass: 'custom-hotspot'
                         },
                         {
                             pitch: -1.8,
@@ -97,11 +104,10 @@
                             type: 'scene',
                             text: 'Ir a la Cocina',
                             sceneId: 'escena3',
-                            cssClass: 'custom-hotspot' /* Aplica la clase personalizada */
+                            cssClass: 'custom-hotspot'
                         }
                     ]
                 },
-                
                 escena3: {
                     title: 'Cocina',
                     type: 'equirectangular',
@@ -113,7 +119,7 @@
                             type: 'scene',
                             text: 'Volver al Salón',
                             sceneId: 'escena2',
-                            cssClass: 'custom-hotspot' /* Aplica la clase personalizada */
+                            cssClass: 'custom-hotspot'
                         }
                     ]
                 }
