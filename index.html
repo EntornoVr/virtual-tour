@@ -2,69 +2,52 @@
 <html>
 <head>
     <title>Tour Virtual 360</title>
+    <!-- CSS de Pannellum -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.css"/>
+    <!-- JavaScript de Pannellum -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.js"></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
         #panorama {
             width: 100%;
-            height: 100vh;
+            height: 600px;
         }
-        .title-overlay {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            background-color: rgba(0,0,0,0.5);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
+        .title {
+            text-align: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
         }
-        .custom-hotspot {
-            width: 50px;
-            height: 50px;
-            background-image: url('https://entornovr.github.io/virtual-tour/imagenes/tipos-de-hotspot/Flecharoja.png');
-            background-size: cover;
-            cursor: pointer;
-        }
-        /* Estilos para el botón de control del acelerómetro */
-        .pnlm-controls .pnlm-motion-ctrl-toggle {
-            width: 60px !important;
-            height: 60px !important;
-            font-size: 30px !important;
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .info {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
         }
     </style>
 </head>
 <body>
-    <div class="title-overlay">Test Tour Virtual 360</div>
+    <h1 class="title">Mi Tour Virtual 360</h1>
+    
+    <!-- Contenedor para la panorámica -->
     <div id="panorama"></div>
+    
+    <div class="info">
+        <h2>Instrucciones</h2>
+        <p>Haz clic en los puntos destacados (hotspots) para navegar entre las diferentes escenas. Puedes arrastrar para mirar alrededor y usar la rueda del ratón para hacer zoom.</p>
+    </div>
+    
     <script>
+        // Configuración del visor
         pannellum.viewer('panorama', {
             default: {
                 firstScene: 'escena1',
-                sceneFadeDuration: 1000,
-                autoLoad: true
+                sceneFadeDuration: 1000
             },
-            motionControls: true, // Habilita el acelerómetro
+            
             scenes: {
                 escena1: {
-                    title: 'Escena 1',
+                    title: 'Entrada Principal',
                     type: 'equirectangular',
-                    panorama: 'https://entornovr.github.io/virtual-tour/imagenes/escena1.jpg',
+                    panorama: 'https://drive.google.com/file/d/1NP3O5_8Dfj4vJYU8J_o6_FXGNJNcMMZj/view?usp=sharing',
                     compass: true,
                     northOffset: 247.5,
                     hotSpots: [
@@ -73,53 +56,62 @@
                             yaw: 37.1,
                             type: 'scene',
                             text: 'Ir al Salón',
-                            sceneId: 'escena2',
-                            cssClass: 'custom-hotspot'
+                            sceneId: 'escena2'
                         },
                         {
                             pitch: -2.1,
                             yaw: 5.4,
                             type: 'info',
-                            text: 'Información sobre la entrada',
-                            cssClass: 'custom-hotspot'
+                            text: 'Información sobre la entrada'
                         }
                     ]
                 },
+                
                 escena2: {
-                    title: 'Escena 2',
+                    title: 'Salón',
                     type: 'equirectangular',
-                    panorama: 'https://entornovr.github.io/virtual-tour/imagenes/escena2.jpg',
+                    panorama: 'https://photos.google.com/album/AF1QipMLH4WdD2Cb1gPdyweEfaEPbwzsazlJb6cQEfQW/photo/AF1QipPTmJkkX5Oe7Sf3pL4la8tGeB7deua-EfW6PKoo',
                     hotSpots: [
                         {
                             pitch: 1.2,
                             yaw: 197.6,
                             type: 'scene',
                             text: 'Volver a la Entrada',
-                            sceneId: 'escena1',
-                            cssClass: 'custom-hotspot'
+                            sceneId: 'escena1'
                         },
                         {
                             pitch: -1.8,
                             yaw: 120.4,
                             type: 'scene',
                             text: 'Ir a la Cocina',
-                            sceneId: 'escena3',
-                            cssClass: 'custom-hotspot'
+                            sceneId: 'escena3'
+                        },
+                        {
+                            pitch: -0.2,
+                            yaw: 90.5,
+                            type: 'info',
+                            text: 'Detalle del salón'
                         }
                     ]
                 },
+                
                 escena3: {
                     title: 'Cocina',
                     type: 'equirectangular',
-                    panorama: 'https://entornovr.github.io/virtual-tour/imagenes/escena3.jpg',
+                    panorama: 'https://photos.google.com/album/AF1QipMLH4WdD2Cb1gPdyweEfaEPbwzsazlJb6cQEfQW/photo/AF1QipNjvCTANnNfMwjl-mvXxG5hJBZEesfXOHrjQTKB',
                     hotSpots: [
                         {
                             pitch: 0.5,
                             yaw: 304.2,
                             type: 'scene',
                             text: 'Volver al Salón',
-                            sceneId: 'escena2',
-                            cssClass: 'custom-hotspot'
+                            sceneId: 'escena2'
+                        },
+                        {
+                            pitch: -1.1,
+                            yaw: 150.8,
+                            type: 'info',
+                            text: 'Características de la cocina'
                         }
                     ]
                 }
