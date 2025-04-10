@@ -2,14 +2,18 @@
 <html>
 <head>
     <title>Tour Virtual 360</title>
-    <!-- CSS de Pannellum -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.css"/>
-    <!-- JavaScript de Pannellum -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.js"></script>
     <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
         #panorama {
-            width: 100%;
-            height: 600px;
+            width: 100vw;
+            height: 100vh;
         }
         .title {
             text-align: center;
@@ -26,23 +30,23 @@
 </head>
 <body>
     <h1 class="title">Mi Tour Virtual 360</h1>
-    
-    <!-- Contenedor para la panorámica -->
+
     <div id="panorama"></div>
-    
+
     <div class="info">
         <h2>Instrucciones</h2>
         <p>Haz clic en los puntos destacados (hotspots) para navegar entre las diferentes escenas. Puedes arrastrar para mirar alrededor y usar la rueda del ratón para hacer zoom.</p>
     </div>
-    
+
     <script>
         // Configuración del visor
         pannellum.viewer('panorama', {
+            autoLoad: true, // Habilita la autocarga de panoramas
             default: {
                 firstScene: 'escena1',
                 sceneFadeDuration: 1000
             },
-            
+
             scenes: {
                 escena1: {
                     title: 'Entrada Principal',
@@ -66,7 +70,7 @@
                         }
                     ]
                 },
-                
+
                 escena2: {
                     title: 'Salón',
                     type: 'equirectangular',
@@ -94,7 +98,7 @@
                         }
                     ]
                 },
-                
+
                 escena3: {
                     title: 'Cocina',
                     type: 'equirectangular',
