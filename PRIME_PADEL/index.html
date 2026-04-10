@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tour Virtual - Prime Padel</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+        #panorama { width: 100%; height: 100vh; background: #000; }
+        
+        /* Estilo opcional para un botón de ayuda o info */
+        .custom-hotspot { height: 30px; width: 30px; background: #2ecc71; border-radius: 50%; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div id="panorama"></div>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+<script>
+    pannellum.viewer('panorama', {
+        "type": "equirectangular",
+        "panorama": "FOTO_PADEL_360.jpg", // <--- CAMBIA ESTO por el nombre exacto de tu imagen
+        "autoLoad": true,
+        "autoRotate": -2,
+        "compass": true,
+        "title": "Prime Padel Club",
+        "author": "Entorno VR",
+        "motionControls": true, // Activa el acelerómetro para móviles
+        "orientationOnByDefault": false
+    });
+</script>
+
+</body>
+</html>
