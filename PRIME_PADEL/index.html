@@ -1,39 +1,137 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <title>Prime Padel - Tour Virtual 360</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tour Virtual - Prime Padel</title>
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.js"></script>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
-        #panorama { width: 100%; height: 100vh; background: #000; }
-        
-        /* Estilo opcional para un botón de ayuda o info */
-        .custom-hotspot { height: 30px; width: 30px; background: #2ecc71; border-radius: 50%; cursor: pointer; }
+        body, html { margin: 0; padding: 0; overflow: hidden; background-color: #000; }
+        #panorama { width: 100vw; height: 100vh; }
+        /* Estilo para que el título flote sobre el panorama */
+        .overlay-title {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            z-index: 10;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
 
-<div id="panorama"></div>
+    <div class="overlay-title">
+        <h1>PRIME PADEL CLUB</h1>
+    </div>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <div id="panorama"></div>
 
-<script>
-    pannellum.viewer('panorama', {
-        "type": "equirectangular",
-        "panorama": "P01.jpg", // <--- CAMBIA ESTO por el nombre exacto de tu imagen
-        "autoLoad": true,
-        "autoRotate": -2,
-        "compass": true,
-        "title": "Prime Padel Club",
-        "author": "Entorno VR",
-        "motionControls": true, // Activa el acelerómetro para móviles
-        "orientationOnByDefault": false
-    });
-</script>
+    <script>
+        pannellum.viewer('panorama', {
+            "default": {
+                "firstScene": "escena1",
+                "author": "Entorno VR",
+                "sceneFadeDuration": 1000,
+                "autoLoad": true,
+                "motionControls": true
+            },
 
+            "scenes": {
+                "escena1": {
+                    "title": "Pista Central - Inicio",
+                    "type": "equirectangular",
+                    "panorama": "P01.jpg",
+                    "hotSpots": [
+                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Ir a Escena 2", "sceneId": "escena2" }
+                    ]
+                },
+                "escena2": {
+                    "title": "Escena 2",
+                    "type": "equirectangular",
+                    "panorama": "02.jpg",
+                    "hotSpots": [
+                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver a Inicio", "sceneId": "escena1" },
+                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Ir a Escena 3", "sceneId": "escena3" }
+                    ]
+                },
+                "escena3": {
+                    "title": "Escena 3",
+                    "type": "equirectangular",
+                    "panorama": "03.jpg",
+                    "hotSpots": [
+                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena2" },
+                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena4" }
+                    ]
+                },
+                "escena4": {
+                    "title": "Escena 4",
+                    "type": "equirectangular",
+                    "panorama": "04.jpg",
+                    "hotSpots": [
+                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena3" },
+                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena5" }
+                    ]
+                },
+                "escena5": {
+                    "title": "Escena 5",
+                    "type": "equirectangular",
+                    "panorama": "05.jpg",
+                    "hotSpots": [
+                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena4" },
+                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena6" }
+                    ]
+                },
+                "escena6": {
+                    "title": "Escena 6",
+                    "type": "equirectangular",
+                    "panorama": "06.jpg",
+                    "hotSpots": [
+                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena5" },
+                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena7" }
+                    ]
+                },
+                "escena7": {
+                    "title": "Escena 7",
+                    "type": "equirectangular",
+                    "panorama": "07.jpg",
+                    "hotSpots": [
+                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena6" },
+                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena8" }
+                    ]
+                },
+                "escena8": {
+                    "title": "Escena 8",
+                    "type": "equirectangular",
+                    "panorama": "08.jpg",
+                    "hotSpots": [
+                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena7" },
+                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena9" }
+                    ]
+                },
+                "escena9": {
+                    "title": "Escena 9",
+                    "type": "equirectangular",
+                    "panorama": "09.jpg",
+                    "hotSpots": [
+                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena8" },
+                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena10" }
+                    ]
+                },
+                "escena10": {
+                    "title": "Escena 10 - Final",
+                    "type": "equirectangular",
+                    "panorama": "10.jpg",
+                    "hotSpots": [
+                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver a Escena 9", "sceneId": "escena9" }
+                    ]
+                }
+            }
+        });
+    </script>
 </body>
 </html>
