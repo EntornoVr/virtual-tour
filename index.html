@@ -3,242 +3,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EntornoVR | Fotografía Inmersiva y Tours Virtuales 360°</title>
-    <!-- Google Fonts & FontAwesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>EntornoVR | Tours Virtuales 360° & Experiencias Inmersivas</title>
+    
+    <!-- Fuentes modernas & Iconos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
         :root {
-            --primary: #00d2ff;
-            --secondary: #3a7bd5;
-            --dark: #0f172a;
-            --card-bg: #1e293b;
-            --text: #f8fafc;
+            --bg-dark: #07090e;
+            --card-bg: rgba(18, 24, 38, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary-neon: #00f2fe;
+            --secondary-neon: #4facfe;
+            --accent-purple: #7f00ff;
+            --text-main: #f1f5f9;
             --text-muted: #94a3b8;
+            --whatsapp-color: #25d366;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         body {
-            background-color: var(--dark);
-            color: var(--text);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 242, 254, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(127, 0, 255, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
         }
 
-        /* Header / Hero Section */
+        /* Ambient Glow Backgrounds */
+        .glow-1 {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 300px;
+            background: linear-gradient(90deg, var(--primary-neon), var(--accent-purple));
+            filter: blur(140px);
+            opacity: 0.25;
+            z-index: -1;
+            border-radius: 50%;
+        }
+
+        /* HERO SECTION */
         header {
-            background: linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(30,41,59,0.9) 100%), 
-                        url('https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1200&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            padding: 60px 20px;
+            padding: 80px 20px 40px;
             text-align: center;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
         }
 
-        .badge {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: #000;
-            font-weight: 700;
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            color: var(--primary-neon);
+            padding: 6px 16px;
+            border-radius: 30px;
             font-size: 0.8rem;
-            padding: 5px 15px;
-            border-radius: 20px;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            display: inline-block;
-            margin-bottom: 15px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-neon);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary-neon);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 242, 254, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0); }
         }
 
         h1 {
-            font-size: 2.4rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #00d2ff, #92fe9d);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #ffffff 30%, var(--primary-neon) 70%, var(--secondary-neon) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        p.subtitle {
-            font-size: 1.1rem;
+        p.hero-subtitle {
+            font-size: 1.15rem;
             color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto 25px auto;
+            max-width: 650px;
+            margin: 0 auto 35px;
+            font-weight: 300;
         }
 
-        .cta-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: #25d366; /* WhatsApp Green */
-            color: #fff;
-            padding: 12px 28px;
-            border-radius: 30px;
-            font-weight: 600;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-            transition: transform 0.2s ease;
+        /* METRICS BAR (Prueba Social y Neuromarketing) */
+        .metrics-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
         }
 
-        .cta-btn:hover {
-            transform: translateY(-2px);
+        .metric-item {
+            text-align: center;
         }
 
-        /* Container Section */
+        .metric-number {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary-neon);
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* PORTAFOLIO SECTION */
         .container {
             max-width: 1100px;
-            margin: 40px auto;
+            margin: 60px auto;
             padding: 0 20px;
         }
 
-        .section-title {
+        .section-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
         }
 
-        .section-title h2 {
-            font-size: 1.8rem;
-            color: #fff;
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
         }
 
-        .section-title p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        /* Portfolio Grid */
+        /* CARDS GRID (Glassmorphism Moderno) */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
         }
 
         .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px;
+            backdrop-filter: blur(12px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 210, 255, 0.15);
+            transform: translateY(-8px);
+            border-color: rgba(0, 242, 254, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 242, 254, 0.15);
         }
 
-        .card-body {
-            padding: 20px;
-        }
-
-        .card-tag {
+        .card-category {
             font-size: 0.75rem;
-            color: var(--primary);
-            font-weight: 600;
+            font-weight: 700;
+            color: var(--primary-neon);
             text-transform: uppercase;
-            margin-bottom: 5px;
-            display: block;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .card-text {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-        }
-
-        .btn-view {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            text-align: center;
-            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
             color: #fff;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        .btn-card {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
+            color: #07090e;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 700;
             text-decoration: none;
-            font-weight: 600;
-            border-radius: 6px;
-            transition: opacity 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.2);
         }
 
-        .btn-view:hover {
-            opacity: 0.9;
+        .btn-card:hover {
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.4);
+            transform: scale(1.02);
         }
 
-        /* Footer */
+        /* FLOATING WHATSAPP BUTTON */
+        .float-whatsapp {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: var(--whatsapp-color);
+            color: white;
+            border-radius: 50px;
+            padding: 12px 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .float-whatsapp:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(37, 211, 102, 0.6);
+        }
+
         footer {
             text-align: center;
-            padding: 30px;
+            padding: 40px 20px;
             color: var(--text-muted);
             font-size: 0.85rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            margin-top: 50px;
+            border-top: 1px solid var(--card-border);
+            margin-top: 80px;
         }
     </style>
 </head>
 <body>
 
+    <div class="glow-1"></div>
+
     <!-- HERO HEADER -->
     <header>
-        <span class="badge">Experiencias Inmersivas 360°</span>
-        <h1>EntornoVR</h1>
-        <p class="subtitle">Transformamos instalaciones físicas en recorridos virtuales interactivos para atraer más clientes a tu negocio.</p>
+        <div class="badge-status">
+            <span class="pulse-dot"></span> Tecnología 360° Interactiva
+        </div>
         
-        <!-- Reemplaza con tu número de WhatsApp -->
-        <a href="https://wa.me/5215500000000?text=Hola,%20me%20interesa%20cotizar%20un%20tour%20virtual%20360%20para%20mi%20negocio" class="cta-btn" target="_blank">
-            <i class="fab fa-whatsapp"></i> Solicitar Demostración
-        </a>
+        <h1>Haz que tus clientes <span class="text-gradient">recorran tu negocio</span> antes de visitarte.</h1>
+        
+        <p class="hero-subtitle">Fotografía inmersiva de alta definición y tours virtuales diseñados para aumentar reservas, visitas y ventas directas.</p>
+
+        <!-- Métricas Rápidas de Impacto -->
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <div class="metric-number">300%</div>
+                <div class="metric-label">Mayor Interacción</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-number">4K Ultra HD</div>
+                <div class="metric-label">Resolución Limpia</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-number">0 Horas</div>
+                <div class="metric-label">Mantenimiento Web</div>
+            </div>
+        </div>
     </header>
 
-    <!-- PORTAFOLIO DE PROYECTOS -->
-    <div class="container">
-        <div class="section-title">
-            <h2>Portafolio de Demostración</h2>
-            <p>Haz clic en cualquiera de nuestros proyectos para experimentar el recorrido interactivo 360°.</p>
+    <!-- PORTAFOLIO SECCIÓN -->
+    <main class="container">
+        <div class="section-header">
+            <h2 class="section-title">Demostraciones en Vivo</h2>
+            <p style="color: var(--text-muted);">Selecciona un proyecto para interactuar con la experiencia 360°</p>
         </div>
 
         <div class="grid">
 
             <!-- TARJETA 1: PRIME PADEL -->
-            <div class="card">
-                <div class="card-body">
-                    <span class="card-tag">Club Deportivo</span>
+            <article class="card">
+                <div>
+                    <span class="card-category"><i class="fas fa-trophy"></i> Club Deportivo</span>
                     <h3 class="card-title">PRIME PADEL</h3>
-                    <p class="card-text">Recorrido inmersivo completo por las canchas y áreas comunes del club (10 escenas interactivas).</p>
-                    
-                    <!-- Enlace directo a la subcarpeta PRIME_PADEL -->
-                    <a href="./PRIME_PADEL/" class="btn-view">
-                        <i class="fas fa-vr-cardboard"></i> Ver Tour Virtual
-                    </a>
+                    <p class="card-desc">Recorrido inmersivo fluido a través de 10 escenas HD interactivas. Muestra canchas, accesos y áreas comunes en alta definición.</p>
                 </div>
-            </div>
+                <a href="./PRIME_PADEL/" class="btn-card">
+                    <i class="fas fa-vr-cardboard"></i> Explorar Tour Virtual
+                </a>
+            </article>
 
-            <!-- TARJETA 2: DEMO GENERAL (Opcional) -->
-            <div class="card">
-                <div class="card-body">
-                    <span class="card-tag">Muestra Técnica</span>
-                    <h3 class="card-title">Recorrido Demo 360°</h3>
-                    <p class="card-text">Ejemplo de visualización rápida para pequeños comercios y espacios comerciales.</p>
-                    
-                    <a href="./DEMO_GENERAL/" class="btn-view">
-                        <i class="fas fa-vr-cardboard"></i> Ver Tour Virtual
-                    </a>
+            <!-- TARJETA 2: PROXIMO PROYECTO (Placeholder Prospección) -->
+            <article class="card" style="border-style: dashed;">
+                <div>
+                    <span class="card-category" style="color: var(--text-muted);"><i class="fas fa-store"></i> Tu Negocio Aquí</span>
+                    <h3 class="card-title">¿Listo para destacar?</h3>
+                    <p class="card-desc">Lleva tus instalaciones al siguiente nivel. Publicación lista para Google Maps, Facebook 360 y tu sitio web.</p>
                 </div>
-            </div>
+                <!-- REEMPLAZA EL NÚMERO DE TELÉFONO CON EL TUYO (Formato Internacional Ej: 5215512345678) -->
+                <a href="https://wa.me/5215500000000?text=Hola,%20quisiera%20cotizar%20un%20tour%20virtual%20360%20para%20mi%20negocio" target="_blank" class="btn-card" style="background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--card-border);">
+                    <i class="fab fa-whatsapp"></i> Agendar Demostración
+                </a>
+            </article>
 
         </div>
-    </div>
+    </main>
+
+    <!-- BOTÓN FLOTANTE PERSISTENTE DE WHATSAPP -->
+    <!-- REEMPLAZA EL NÚMERO DE TELÉFONO CON EL TUYO -->
+    <a href="https://wa.me/5215500000000?text=Hola!%20Vi%20tu%20portafolio%20en%20EntornoVR%20y%20me%20gustaría%20información." class="float-whatsapp" target="_blank">
+        <i class="fab fa-whatsapp" style="font-size: 1.4rem;"></i>
+        <span>Cotizar 360°</span>
+    </a>
 
     <footer>
-        &copy; 2026 EntornoVR — Soluciones Visuales Inmersivas.
+        <p>&copy; 2026 EntornoVR. Todos los derechos reservados.</p>
     </footer>
 
 </body>
