@@ -50,11 +50,7 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* ==========================================
-           ESTILOS PERSONALIZADOS PARA LOS HOTSPOTS
-           ========================================== */
-        
-        /* Contenedor principal del hotspot neón */
+        /* ESTILOS PERSONALIZADOS DE HOTSPOTS NEÓN */
         .custom-hotspot {
             height: 38px;
             width: 38px;
@@ -71,20 +67,12 @@
             animation: pulse-radar 2s infinite;
         }
 
-        /* Animación de radar expansivo */
         @keyframes pulse-radar {
-            0% {
-                box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.8);
-            }
-            70% {
-                box-shadow: 0 0 0 16px rgba(0, 242, 254, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(0, 242, 254, 0);
-            }
+            0% { box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.8); }
+            70% { box-shadow: 0 0 0 16px rgba(0, 242, 254, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 242, 254, 0); }
         }
 
-        /* Efecto al tocar en móvil o pasar cursor */
         .custom-hotspot:hover {
             transform: scale(1.2);
             background: linear-gradient(135deg, #25d366 0%, #00f2fe 100%);
@@ -95,7 +83,6 @@
             color: #07090e;
         }
 
-        /* Etiquetas flotantes (Tooltips) con nombre de destino */
         .pnm-tooltip {
             position: relative;
         }
@@ -121,7 +108,6 @@
             pointer-events: none;
         }
 
-        /* Mostrar etiqueta al pasar el cursor o tocar */
         .custom-hotspot:hover .pnm-tooltip span {
             visibility: visible;
             opacity: 1;
@@ -137,30 +123,28 @@
     <div id="panorama"></div>
 
     <script>
-        // Función Javascript para construir la estructura visual del Hotspot
         function customHotspot(hotspotDiv, args) {
             hotspotDiv.classList.add('custom-hotspot');
             
-            // Icono dinámico según la dirección o escena
             var icon = document.createElement('i');
             icon.classList.add('fas', args.icon || 'fa-street-view');
             hotspotDiv.appendChild(icon);
 
-            // Crear etiqueta flotante (Tooltip)
             var tooltip = document.createElement('div');
             tooltip.classList.add('pnm-tooltip');
             tooltip.innerHTML = '<span>' + args.text + '</span>';
             hotspotDiv.appendChild(tooltip);
         }
 
-        // Configuración del Visor Pannellum
-        pannellum.viewer('panorama', {
+        // CONFIGURACIÓN DE PANNELLUM
+        var viewer = pannellum.viewer('panorama', {
             "default": {
                 "firstScene": "escena1",
                 "author": "Entorno VR",
                 "sceneFadeDuration": 1000,
                 "autoLoad": true,
-                "motionControls": true
+                "motionControls": true,
+                "orientationOnByDefault": true /* <-- Acelerómetro activo por defecto */
             },
 
             "scenes": {
@@ -380,6 +364,21 @@
                 }
             }
         });
+
+        // DESBLOQUEO DE PERMISOS DE MOVIMIENTO AL PRIMER TOQUE (Requerido para celulares)
+        document.body.addEventListener('click', function() {
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(function(response) {
+                        if (response === 'granted') {
+                            viewer.startOrientation();
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                viewer.startOrientation();
+            }
+        }, { once: true });
     </script>
 </body>
 </html>
