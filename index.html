@@ -1,126 +1,245 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Tour Virtual 360</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.js"></script>
+    <title>EntornoVR | Fotografía Inmersiva y Tours Virtuales 360°</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body, html {
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --dark: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
-        #panorama {
-            width: 100vw;
-            height: 100vh;
+
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            line-height: 1.6;
         }
-        .title {
+
+        /* Header / Hero Section */
+        header {
+            background: linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(30,41,59,0.9) 100%), 
+                        url('https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1200&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            padding: 60px 20px;
             text-align: center;
-            padding: 20px;
-            font-family: Arial, sans-serif;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
         }
-        .info {
+
+        .badge {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: #000;
+            font-weight: 700;
+            font-size: 0.8rem;
+            padding: 5px 15px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #00d2ff, #92fe9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 25px auto;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #25d366; /* WhatsApp Green */
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+            transition: transform 0.2s ease;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Container Section */
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title h2 {
+            font-size: 1.8rem;
+            color: #fff;
+        }
+
+        .section-title p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Portfolio Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 210, 255, 0.15);
+        }
+
+        .card-body {
             padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            font-family: Arial, sans-serif;
+        }
+
+        .card-tag {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .btn-view {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-view:hover {
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 50px;
         }
     </style>
 </head>
 <body>
-    <h1 class="title">Mi Tour Virtual 360</h1>
 
-    <div id="panorama"></div>
+    <!-- HERO HEADER -->
+    <header>
+        <span class="badge">Experiencias Inmersivas 360°</span>
+        <h1>EntornoVR</h1>
+        <p class="subtitle">Transformamos instalaciones físicas en recorridos virtuales interactivos para atraer más clientes a tu negocio.</p>
+        
+        <!-- Reemplaza con tu número de WhatsApp -->
+        <a href="https://wa.me/5215500000000?text=Hola,%20me%20interesa%20cotizar%20un%20tour%20virtual%20360%20para%20mi%20negocio" class="cta-btn" target="_blank">
+            <i class="fab fa-whatsapp"></i> Solicitar Demostración
+        </a>
+    </header>
 
-    <div class="info">
-        <h2>Instrucciones</h2>
-        <p>Haz clic en los puntos destacados (hotspots) para navegar entre las diferentes escenas. Puedes arrastrar para mirar alrededor y usar la rueda del ratón para hacer zoom.</p>
+    <!-- PORTAFOLIO DE PROYECTOS -->
+    <div class="container">
+        <div class="section-title">
+            <h2>Portafolio de Demostración</h2>
+            <p>Haz clic en cualquiera de nuestros proyectos para experimentar el recorrido interactivo 360°.</p>
+        </div>
+
+        <div class="grid">
+
+            <!-- TARJETA 1: PRIME PADEL -->
+            <div class="card">
+                <div class="card-body">
+                    <span class="card-tag">Club Deportivo</span>
+                    <h3 class="card-title">PRIME PADEL</h3>
+                    <p class="card-text">Recorrido inmersivo completo por las canchas y áreas comunes del club (10 escenas interactivas).</p>
+                    
+                    <!-- Enlace directo a la subcarpeta PRIME_PADEL -->
+                    <a href="./PRIME_PADEL/" class="btn-view">
+                        <i class="fas fa-vr-cardboard"></i> Ver Tour Virtual
+                    </a>
+                </div>
+            </div>
+
+            <!-- TARJETA 2: DEMO GENERAL (Opcional) -->
+            <div class="card">
+                <div class="card-body">
+                    <span class="card-tag">Muestra Técnica</span>
+                    <h3 class="card-title">Recorrido Demo 360°</h3>
+                    <p class="card-text">Ejemplo de visualización rápida para pequeños comercios y espacios comerciales.</p>
+                    
+                    <a href="./DEMO_GENERAL/" class="btn-view">
+                        <i class="fas fa-vr-cardboard"></i> Ver Tour Virtual
+                    </a>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <script>
-        // Configuración del visor
-        pannellum.viewer('panorama', {
-            autoLoad: true, // Habilita la autocarga de panoramas
-            default: {
-                firstScene: 'escena1',
-                sceneFadeDuration: 1000
-            },
+    <footer>
+        &copy; 2026 EntornoVR — Soluciones Visuales Inmersivas.
+    </footer>
 
-            scenes: {
-                escena1: {
-                    title: 'Entrada Principal',
-                    type: 'equirectangular',
-                    panorama: 'https://entornovr.github.io/virtual-tour/imagenes/escena1.jpg',
-                    compass: true,
-                    northOffset: 247.5,
-                    hotSpots: [
-                        {
-                            pitch: -0.6,
-                            yaw: 37.1,
-                            type: 'scene',
-                            text: 'Ir al Salón',
-                            sceneId: 'escena2'
-                        },
-                        {
-                            pitch: -2.1,
-                            yaw: 5.4,
-                            type: 'info',
-                            text: 'Información sobre la entrada'
-                        }
-                    ]
-                },
-
-                escena2: {
-                    title: 'Salón',
-                    type: 'equirectangular',
-                    panorama: 'https://entornovr.github.io/virtual-tour/imagenes/escena2.jpg',
-                    hotSpots: [
-                        {
-                            pitch: 1.2,
-                            yaw: 197.6,
-                            type: 'scene',
-                            text: 'Volver a la Entrada',
-                            sceneId: 'escena1'
-                        },
-                        {
-                            pitch: -1.8,
-                            yaw: 120.4,
-                            type: 'scene',
-                            text: 'Ir a la Cocina',
-                            sceneId: 'escena3'
-                        },
-                        {
-                            pitch: -0.2,
-                            yaw: 90.5,
-                            type: 'info',
-                            text: 'Detalle del salón'
-                        }
-                    ]
-                },
-
-                escena3: {
-                    title: 'Cocina',
-                    type: 'equirectangular',
-                    panorama: 'https://entornovr.github.io/virtual-tour/imagenes/escena3.jpg',
-                    hotSpots: [
-                        {
-                            pitch: 0.5,
-                            yaw: 304.2,
-                            type: 'scene',
-                            text: 'Volver al Salón',
-                            sceneId: 'escena2'
-                        },
-                        {
-                            pitch: -1.1,
-                            yaw: 150.8,
-                            type: 'info',
-                            text: 'Características de la cocina'
-                        }
-                    ]
-                }
-            }
-        });
-    </script>
 </body>
 </html>
