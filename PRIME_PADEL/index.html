@@ -1,14 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>Prime Padel - Tour Virtual 360</title>
+    <title>PRIME PADEL - Tour Virtual 360</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Librerías de Pannellum -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.js"></script>
+    
+    <!-- Iconos FontAwesome para los Hotspots -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-        body, html { margin: 0; padding: 0; overflow: hidden; background-color: #000; }
-        #panorama { width: 100vw; height: 100vh; }
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            background-color: #000; 
+            font-family: Arial, sans-serif;
+        }
+        
+        #panorama { 
+            width: 100vw; 
+            height: 100vh; 
+        }
+
         /* Estilo para que el título flote sobre el panorama */
         .overlay-title {
             position: absolute;
@@ -16,10 +33,98 @@
             width: 100%;
             text-align: center;
             color: white;
-            font-family: Arial, sans-serif;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.9);
             z-index: 10;
             pointer-events: none;
+        }
+
+        .overlay-title h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            background: rgba(0, 0, 0, 0.4);
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* ==========================================
+           ESTILOS PERSONALIZADOS PARA LOS HOTSPOTS
+           ========================================== */
+        
+        /* Contenedor principal del hotspot neón */
+        .custom-hotspot {
+            height: 38px;
+            width: 38px;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            color: #07090e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.8);
+            transition: transform 0.3s ease, background 0.3s ease;
+            animation: pulse-radar 2s infinite;
+        }
+
+        /* Animación de radar expansivo */
+        @keyframes pulse-radar {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.8);
+            }
+            70% {
+                box-shadow: 0 0 0 16px rgba(0, 242, 254, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 242, 254, 0);
+            }
+        }
+
+        /* Efecto al tocar en móvil o pasar cursor */
+        .custom-hotspot:hover {
+            transform: scale(1.2);
+            background: linear-gradient(135deg, #25d366 0%, #00f2fe 100%);
+        }
+
+        .custom-hotspot i {
+            font-size: 16px;
+            color: #07090e;
+        }
+
+        /* Etiquetas flotantes (Tooltips) con nombre de destino */
+        .pnm-tooltip {
+            position: relative;
+        }
+
+        .pnm-tooltip span {
+            visibility: hidden;
+            background-color: rgba(15, 23, 42, 0.9);
+            color: #ffffff;
+            text-align: center;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 242, 254, 0.5);
+            font-size: 0.8rem;
+            font-weight: bold;
+            white-space: nowrap;
+            position: absolute;
+            bottom: 48px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            pointer-events: none;
+        }
+
+        /* Mostrar etiqueta al pasar el cursor o tocar */
+        .custom-hotspot:hover .pnm-tooltip span {
+            visibility: visible;
+            opacity: 1;
         }
     </style>
 </head>
@@ -32,6 +137,23 @@
     <div id="panorama"></div>
 
     <script>
+        // Función Javascript para construir la estructura visual del Hotspot
+        function customHotspot(hotspotDiv, args) {
+            hotspotDiv.classList.add('custom-hotspot');
+            
+            // Icono dinámico según la dirección o escena
+            var icon = document.createElement('i');
+            icon.classList.add('fas', args.icon || 'fa-street-view');
+            hotspotDiv.appendChild(icon);
+
+            // Crear etiqueta flotante (Tooltip)
+            var tooltip = document.createElement('div');
+            tooltip.classList.add('pnm-tooltip');
+            tooltip.innerHTML = '<span>' + args.text + '</span>';
+            hotspotDiv.appendChild(tooltip);
+        }
+
+        // Configuración del Visor Pannellum
         pannellum.viewer('panorama', {
             "default": {
                 "firstScene": "escena1",
@@ -47,7 +169,14 @@
                     "type": "equirectangular",
                     "panorama": "P01.jpg",
                     "hotSpots": [
-                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Ir a Escena 2", "sceneId": "escena2" }
+                        { 
+                            "pitch": -5, 
+                            "yaw": 0, 
+                            "type": "scene", 
+                            "sceneId": "escena2",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Ir a Entrada", "icon": "fa-arrow-up" }
+                        }
                     ]
                 },
                 "escena2": {
@@ -55,8 +184,22 @@
                     "type": "equirectangular",
                     "panorama": "02.jpg",
                     "hotSpots": [
-                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver a Inicio", "sceneId": "escena1" },
-                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Ir a Escena 3", "sceneId": "escena3" }
+                        { 
+                            "pitch": -5, 
+                            "yaw": 180, 
+                            "type": "scene", 
+                            "sceneId": "escena1",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Volver a Inicio", "icon": "fa-arrow-down" }
+                        },
+                        { 
+                            "pitch": -5, 
+                            "yaw": 0, 
+                            "type": "scene", 
+                            "sceneId": "escena3",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Ir a Cancha abierta", "icon": "fa-arrow-up" }
+                        }
                     ]
                 },
                 "escena3": {
@@ -64,8 +207,22 @@
                     "type": "equirectangular",
                     "panorama": "03.jpg",
                     "hotSpots": [
-                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena2" },
-                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena4" }
+                        { 
+                            "pitch": -5, 
+                            "yaw": 180, 
+                            "type": "scene", 
+                            "sceneId": "escena2",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Volver a Entrada", "icon": "fa-arrow-down" }
+                        },
+                        { 
+                            "pitch": -5, 
+                            "yaw": 0, 
+                            "type": "scene", 
+                            "sceneId": "escena4",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Ir a Snack", "icon": "fa-arrow-up" }
+                        }
                     ]
                 },
                 "escena4": {
@@ -73,8 +230,22 @@
                     "type": "equirectangular",
                     "panorama": "04.jpg",
                     "hotSpots": [
-                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena3" },
-                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena5" }
+                        { 
+                            "pitch": -5, 
+                            "yaw": 180, 
+                            "type": "scene", 
+                            "sceneId": "escena3",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Volver a Cancha abierta", "icon": "fa-arrow-down" }
+                        },
+                        { 
+                            "pitch": -5, 
+                            "yaw": 0, 
+                            "type": "scene", 
+                            "sceneId": "escena5",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Ir a Canchas cerradas", "icon": "fa-arrow-up" }
+                        }
                     ]
                 },
                 "escena5": {
@@ -82,8 +253,22 @@
                     "type": "equirectangular",
                     "panorama": "05.jpg",
                     "hotSpots": [
-                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena4" },
-                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena6" }
+                        { 
+                            "pitch": -5, 
+                            "yaw": 180, 
+                            "type": "scene", 
+                            "sceneId": "escena4",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Volver a Snack", "icon": "fa-arrow-down" }
+                        },
+                        { 
+                            "pitch": -5, 
+                            "yaw": 0, 
+                            "type": "scene", 
+                            "sceneId": "escena6",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Ir a Cancha cerrada 1", "icon": "fa-arrow-up" }
+                        }
                     ]
                 },
                 "escena6": {
@@ -91,8 +276,22 @@
                     "type": "equirectangular",
                     "panorama": "06.jpg",
                     "hotSpots": [
-                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena5" },
-                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena7" }
+                        { 
+                            "pitch": -5, 
+                            "yaw": 180, 
+                            "type": "scene", 
+                            "sceneId": "escena5",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Volver a Canchas cerradas", "icon": "fa-arrow-down" }
+                        },
+                        { 
+                            "pitch": -5, 
+                            "yaw": 0, 
+                            "type": "scene", 
+                            "sceneId": "escena7",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Ir a Entrada al privado", "icon": "fa-arrow-up" }
+                        }
                     ]
                 },
                 "escena7": {
@@ -100,8 +299,22 @@
                     "type": "equirectangular",
                     "panorama": "07.jpg",
                     "hotSpots": [
-                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena6" },
-                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena8" }
+                        { 
+                            "pitch": -5, 
+                            "yaw": 180, 
+                            "type": "scene", 
+                            "sceneId": "escena6",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Volver a Cancha cerrada 1", "icon": "fa-arrow-down" }
+                        },
+                        { 
+                            "pitch": -5, 
+                            "yaw": 0, 
+                            "type": "scene", 
+                            "sceneId": "escena8",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Ir a Zona Privada Climatizada", "icon": "fa-arrow-up" }
+                        }
                     ]
                 },
                 "escena8": {
@@ -109,8 +322,22 @@
                     "type": "equirectangular",
                     "panorama": "08.jpg",
                     "hotSpots": [
-                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena7" },
-                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena9" }
+                        { 
+                            "pitch": -5, 
+                            "yaw": 180, 
+                            "type": "scene", 
+                            "sceneId": "escena7",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Volver a Entrada al privado", "icon": "fa-arrow-down" }
+                        },
+                        { 
+                            "pitch": -5, 
+                            "yaw": 0, 
+                            "type": "scene", 
+                            "sceneId": "escena9",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Ir a Baños y Regaderas", "icon": "fa-arrow-up" }
+                        }
                     ]
                 },
                 "escena9": {
@@ -118,8 +345,22 @@
                     "type": "equirectangular",
                     "panorama": "09.jpg",
                     "hotSpots": [
-                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver", "sceneId": "escena8" },
-                        { "pitch": -5, "yaw": 0, "type": "scene", "text": "Siguiente", "sceneId": "escena10" }
+                        { 
+                            "pitch": -5, 
+                            "yaw": 180, 
+                            "type": "scene", 
+                            "sceneId": "escena8",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Volver a Zona Privada", "icon": "fa-arrow-down" }
+                        },
+                        { 
+                            "pitch": -5, 
+                            "yaw": 0, 
+                            "type": "scene", 
+                            "sceneId": "escena10",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Ir a Sport Bar", "icon": "fa-arrow-up" }
+                        }
                     ]
                 },
                 "escena10": {
@@ -127,7 +368,14 @@
                     "type": "equirectangular",
                     "panorama": "10.jpg",
                     "hotSpots": [
-                        { "pitch": -5, "yaw": 180, "type": "scene", "text": "Volver a Escena 9", "sceneId": "escena9" }
+                        { 
+                            "pitch": -5, 
+                            "yaw": 180, 
+                            "type": "scene", 
+                            "sceneId": "escena9",
+                            "createTooltipFunc": customHotspot,
+                            "createTooltipArgs": { "text": "Volver a Baños y Regaderas", "icon": "fa-arrow-down" }
+                        }
                     ]
                 }
             }
