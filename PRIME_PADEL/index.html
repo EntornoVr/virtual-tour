@@ -121,7 +121,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* No bloquea la interacción / giroscopio */
+            pointer-events: none; /* Permite interactuar sin interferir con el touch o giroscopio */
             z-index: 5;
             display: none;
         }
@@ -190,7 +190,7 @@
     </div>
 
     <div id="panorama">
-        <!-- CAPA PARA EL EFECTO LENS FLARE -->
+        <!-- CAPA DE ELEMENTOS LENS FLARE -->
         <div id="flare-container">
             <div id="sun-glare" class="sun-glare"></div>
             <div id="flare1" class="flare-polygon"></div>
@@ -230,7 +230,6 @@
                     "title": "Pista Central - Inicio",
                     "type": "equirectangular",
                     "panorama": "P01.jpg",
-                    /* Configuración de la posición del sol en esta escena */
                     "sunPitch": 25.0,
                     "sunYaw": -40.0,
                     "hotSpots": [
@@ -450,7 +449,7 @@
             }
         });
 
-        // LÓGICA DE CÁLCULO Y RENDERIZADO DEL LENS FLARE
+        // LÓGICA DE CÁLCULO Y RENDERIZADO CONTINUO DEL LENS FLARE
         const flareContainer = document.getElementById('flare-container');
         const sunGlare = document.getElementById('sun-glare');
         const flare1 = document.getElementById('flare1');
@@ -485,9 +484,12 @@
 
         function updateLensFlare() {
             const currentSceneId = viewer.getScene();
+            
+            if (!currentSceneId) return;
+
             const sceneConfig = viewer.getConfig().scenes[currentSceneId];
 
-            // Si la escena actual no tiene sol configurado (ej: interiores como baños o bar), ocultar el efecto
+            // Si la escena actual no tiene coordenadas de sol configuradas, ocultar el efecto
             if (!sceneConfig || sceneConfig.sunPitch === undefined || sceneConfig.sunYaw === undefined) {
                 flareContainer.style.display = 'none';
                 return;
@@ -528,9 +530,16 @@
             placeElement(flare4, 1.15, 1.4);  
         }
 
-        // Ejecutar la animación en cada frame que renderice Pannellum
-        viewer.on('render', updateLensFlare);
-        window.addEventListener('resize', updateLensFlare);
+        // BUCLE CONTINUO DE RENDERIZADO (Sincronizado con giroscopio / acelerómetro)
+        function animateFlare() {
+            updateLensFlare();
+            requestAnimationFrame(animateFlare);
+        }
+
+        // Iniciar el ciclo de animación una vez cargado el visor
+        viewer.on('load', function() {
+            requestAnimationFrame(animateFlare);
+        });
 
         // DESBLOQUEO DE PERMISOS DE MOVIMIENTO AL PRIMER TOQUE (Requerido para celulares)
         document.body.addEventListener('click', function() {
