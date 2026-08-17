@@ -24,6 +24,7 @@
         #panorama { 
             width: 100vw; 
             height: 100vh; 
+            position: relative;
         }
 
         /* Estilo para que el título flote sobre el panorama */
@@ -112,6 +113,74 @@
             visibility: visible;
             opacity: 1;
         }
+
+        /* --- ESTILOS DE SUN & LENS FLARE EFFECT --- */
+        #flare-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* No bloquea la interacción / giroscopio */
+            z-index: 5;
+            display: none;
+        }
+
+        .sun-glare {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            margin-left: -150px;
+            margin-top: -150px;
+            background: radial-gradient(circle, rgba(255,255,240,0.9) 0%, rgba(255,220,130,0.5) 30%, rgba(255,180,50,0.15) 60%, rgba(255,255,255,0) 100%);
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            will-change: transform;
+        }
+
+        .flare-element {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            pointer-events: none;
+            will-change: transform;
+        }
+
+        .flare-polygon {
+            position: absolute;
+            width: 65px;
+            height: 65px;
+            margin-left: -32.5px;
+            margin-top: -32.5px;
+            background: rgba(255, 200, 150, 0.4);
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+            mix-blend-mode: screen;
+            will-change: transform;
+        }
+
+        .flare-ring-1 {
+            width: 130px;
+            height: 130px;
+            margin-left: -65px;
+            margin-top: -65px;
+            background: radial-gradient(circle, transparent 40%, rgba(100, 200, 255, 0.35) 60%, transparent 70%);
+        }
+
+        .flare-ring-2 {
+            width: 50px;
+            height: 50px;
+            margin-left: -25px;
+            margin-top: -25px;
+            background: radial-gradient(circle, rgba(255,100,100,0.45) 0%, rgba(255,200,50,0.25) 80%, transparent 100%);
+        }
+
+        .flare-ring-3 {
+            width: 100px;
+            height: 100px;
+            margin-left: -50px;
+            margin-top: -50px;
+            background: radial-gradient(circle, rgba(130, 255, 170, 0.3) 0%, transparent 70%);
+        }
     </style>
 </head>
 <body>
@@ -120,7 +189,16 @@
         <h1>PRIME PADEL</h1>
     </div>
 
-    <div id="panorama"></div>
+    <div id="panorama">
+        <!-- CAPA PARA EL EFECTO LENS FLARE -->
+        <div id="flare-container">
+            <div id="sun-glare" class="sun-glare"></div>
+            <div id="flare1" class="flare-polygon"></div>
+            <div id="flare2" class="flare-element flare-ring-1"></div>
+            <div id="flare3" class="flare-element flare-ring-2"></div>
+            <div id="flare4" class="flare-element flare-ring-3"></div>
+        </div>
+    </div>
 
     <script>
         function customHotspot(hotspotDiv, args) {
@@ -152,6 +230,9 @@
                     "title": "Pista Central - Inicio",
                     "type": "equirectangular",
                     "panorama": "P01.jpg",
+                    /* Configuración de la posición del sol en esta escena */
+                    "sunPitch": 25.0,
+                    "sunYaw": -40.0,
                     "hotSpots": [
                         { 
                             "pitch": -5, 
@@ -167,6 +248,8 @@
                     "title": "Entrada",
                     "type": "equirectangular",
                     "panorama": "02.jpg",
+                    "sunPitch": 30.0,
+                    "sunYaw": 15.0,
                     "hotSpots": [
                         { 
                             "pitch": -5, 
@@ -190,6 +273,8 @@
                     "title": "Cancha abierta",
                     "type": "equirectangular",
                     "panorama": "03.jpg",
+                    "sunPitch": 20.0,
+                    "sunYaw": -60.0,
                     "hotSpots": [
                         { 
                             "pitch": -5, 
@@ -364,6 +449,88 @@
                 }
             }
         });
+
+        // LÓGICA DE CÁLCULO Y RENDERIZADO DEL LENS FLARE
+        const flareContainer = document.getElementById('flare-container');
+        const sunGlare = document.getElementById('sun-glare');
+        const flare1 = document.getElementById('flare1');
+        const flare2 = document.getElementById('flare2');
+        const flare3 = document.getElementById('flare3');
+        const flare4 = document.getElementById('flare4');
+
+        function pitchYawToScreenCoords(pitch, yaw) {
+            const hfov = viewer.getHfov();
+            const vfov = viewer.getVfov ? viewer.getVfov() : (hfov * (window.innerHeight / window.innerWidth));
+            const currentPitch = viewer.getPitch();
+            const currentYaw = viewer.getYaw();
+
+            let dYaw = yaw - currentYaw;
+            while (dYaw > 180) dYaw -= 360;
+            while (dYaw < -180) dYaw += 360;
+
+            let dPitch = pitch - currentPitch;
+
+            if (Math.abs(dYaw) > hfov / 1.5 || Math.abs(dPitch) > vfov / 1.5) {
+                return null;
+            }
+
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+
+            const x = screenWidth / 2 + (dYaw / hfov) * screenWidth;
+            const y = screenHeight / 2 - (dPitch / vfov) * screenHeight;
+
+            return { x, y };
+        }
+
+        function updateLensFlare() {
+            const currentSceneId = viewer.getScene();
+            const sceneConfig = viewer.getConfig().scenes[currentSceneId];
+
+            // Si la escena actual no tiene sol configurado (ej: interiores como baños o bar), ocultar el efecto
+            if (!sceneConfig || sceneConfig.sunPitch === undefined || sceneConfig.sunYaw === undefined) {
+                flareContainer.style.display = 'none';
+                return;
+            }
+
+            const sunPos = pitchYawToScreenCoords(sceneConfig.sunPitch, sceneConfig.sunYaw);
+
+            if (!sunPos || sunPos.x < 0 || sunPos.x > window.innerWidth || sunPos.y < 0 || sunPos.y > window.innerHeight) {
+                flareContainer.style.display = 'none';
+                return;
+            }
+
+            flareContainer.style.display = 'block';
+
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            const dx = sunPos.x - centerX;
+            const dy = sunPos.y - centerY;
+            const distToCenter = Math.sqrt(dx * dx + dy * dy);
+            const maxDist = Math.sqrt(centerX * centerX + centerY * centerY);
+            
+            const centerFactor = 1 - Math.min(distToCenter / maxDist, 1);
+
+            sunGlare.style.transform = `translate3d(${sunPos.x}px, ${sunPos.y}px, 0)`;
+            sunGlare.style.opacity = 0.4 + (centerFactor * 0.6);
+
+            function placeElement(elem, factor, scale = 1) {
+                const posX = centerX - dx * factor;
+                const posY = centerY - dy * factor;
+                elem.style.transform = `translate3d(${posX}px, ${posY}px, 0) scale(${scale + centerFactor * 0.3})`;
+                elem.style.opacity = centerFactor * 0.85;
+            }
+
+            placeElement(flare1, 0.3, 1.0);  
+            placeElement(flare2, 0.65, 1.2); 
+            placeElement(flare3, -0.4, 0.85); 
+            placeElement(flare4, 1.15, 1.4);  
+        }
+
+        // Ejecutar la animación en cada frame que renderice Pannellum
+        viewer.on('render', updateLensFlare);
+        window.addEventListener('resize', updateLensFlare);
 
         // DESBLOQUEO DE PERMISOS DE MOVIMIENTO AL PRIMER TOQUE (Requerido para celulares)
         document.body.addEventListener('click', function() {
