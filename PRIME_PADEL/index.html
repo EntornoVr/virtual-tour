@@ -27,7 +27,6 @@
             position: relative;
         }
 
-        /* Estilo para que el título flote sobre el panorama */
         .overlay-title {
             position: absolute;
             top: 20px;
@@ -115,7 +114,7 @@
         }
 
         /* -------------------------------------------------------------
-           1. PUNTO CENTRAL FIJO (SOL / REFLECTOR BLANCO)
+           1. PUNTO CENTRAL FIJO (SOL / REFLECTOR)
         ------------------------------------------------------------- */
         .lens-flare-anchor {
             position: absolute;
@@ -129,24 +128,24 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 260px;
-            height: 260px;
+            width: 280px;
+            height: 280px;
             transform: translate(-50%, -50%);
             border-radius: 50%;
             background: radial-gradient(
                 circle,
                 rgba(255, 255, 255, 1) 0%,
-                rgba(255, 255, 255, 0.7) 20%,
-                rgba(255, 255, 255, 0.25) 50%,
-                rgba(255, 255, 255, 0) 75%
+                rgba(255, 255, 255, 0.8) 15%,
+                rgba(255, 255, 255, 0.2) 45%,
+                rgba(255, 255, 255, 0) 70%
             );
-            filter: blur(6px);
+            filter: blur(4px);
             pointer-events: none;
             mix-blend-mode: screen;
         }
 
         /* -------------------------------------------------------------
-           2. DESTELLOS DE LENTE DINÁMICOS (ESTILO ORIGINAL RESTAURADO)
+           2. DESTELLOS CINEMATOGRÁFICOS HEXAGONALES
         ------------------------------------------------------------- */
         #flare-overlay {
             position: absolute;
@@ -159,39 +158,45 @@
             overflow: hidden;
         }
 
-        .dynamic-flare-ring {
+        /* Clase base para crear la forma del Hexágono Cinematográfico */
+        .cine-hexagon {
             position: absolute;
-            border-radius: 50%;
             pointer-events: none;
             mix-blend-mode: screen;
             transform: translate(-50%, -50%);
             opacity: 0;
             transition: opacity 0.1s linear;
+            /* Máscara geométrica de 6 lados perfectos */
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
         }
 
-        /* Anillo 1: Halo grande difuminado exterior */
-        .ring-style-1 {
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.35) 0%, rgba(180, 220, 255, 0.15) 40%, rgba(255, 255, 255, 0) 70%);
-            filter: blur(10px);
+        /* Hexágono 1: Azul Cian grande de diafragma suave */
+        .hex-style-1 {
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.35) 0%, rgba(0, 180, 255, 0.15) 70%, rgba(0, 242, 254, 0.05) 100%);
+            filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.5));
         }
 
-        /* Anillo 2: Anillo de lente definido cian/violeta */
-        .ring-style-2 {
-            background: radial-gradient(circle, rgba(0, 242, 254, 0.2) 0%, rgba(138, 43, 226, 0.15) 60%, rgba(255, 255, 255, 0) 75%);
-            border: 2px solid rgba(0, 242, 254, 0.4);
-            box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
+        /* Hexágono 2: Violeta / Magentoso mediano nítido (Aberración cromática) */
+        .hex-style-2 {
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.4) 0%, rgba(255, 0, 128, 0.2) 100%);
+            filter: drop-shadow(0 0 5px rgba(138, 43, 226, 0.6));
         }
 
-        /* Anillo 3: Círculo pequeño azul nítido */
-        .ring-style-3 {
-            background: radial-gradient(circle, rgba(0, 180, 255, 0.6) 0%, rgba(0, 242, 254, 0.2) 70%, rgba(255, 255, 255, 0) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+        /* Hexágono 3: Azul Intenso pequeño y definido */
+        .hex-style-3 {
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(0, 150, 255, 0.4) 60%, rgba(0, 242, 254, 0.2) 100%);
         }
 
-        /* Anillo 4: Pequeño destello secundario violeta */
-        .ring-style-4 {
-            background: radial-gradient(circle, rgba(186, 85, 211, 0.5) 0%, rgba(138, 43, 226, 0.1) 80%);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+        /* Hexágono 4: Anillo hueco verde/dorado de recubrimiento óptico */
+        .hex-style-4 {
+            background: radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(50, 205, 50, 0.35) 80%, rgba(255, 215, 0, 0.2) 100%);
+            filter: drop-shadow(0 0 4px rgba(50, 205, 50, 0.4));
+        }
+
+        /* Hexágono 5: Micro-destello violeta nítido */
+        .hex-style-5 {
+            background: rgba(186, 85, 211, 0.6);
+            filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8));
         }
     </style>
 </head>
@@ -205,10 +210,8 @@
     <div id="flare-overlay"></div>
 
     <script>
-        // Registro de puntos de luz de la escena activa
         let activeLightHotspots = [];
 
-        // Renderiza el punto fijo del sol/luz
         function createFlareElement(hotSpotDiv, args) {
             hotSpotDiv.classList.add('lens-flare-anchor');
             
@@ -223,7 +226,6 @@
             });
         }
 
-        // Renderiza los hotspots de navegación
         function customHotspot(hotspotDiv, args) {
             hotspotDiv.classList.add('custom-hotspot');
             
@@ -237,7 +239,6 @@
             hotspotDiv.appendChild(tooltip);
         }
 
-        // CONFIGURACIÓN DE PANNELLUM
         var viewer = pannellum.viewer('panorama', {
             "default": {
                 "firstScene": "escena1",
@@ -432,32 +433,31 @@
             }
         });
 
-        // Limpiar registro al cambiar de escena
         viewer.on('scenechange', function() {
             activeLightHotspots = [];
             document.getElementById('flare-overlay').innerHTML = '';
         });
 
-        // DEFINICIÓN Y GENERACIÓN DE ANILLOS DE LENTE ESTILO FOTOGRÁFICO
+        // DEFINICIÓN DE HEXÁGONOS CINEMATOGRÁFICOS
         const flareOverlay = document.getElementById('flare-overlay');
-        const ringDefs = [
-            { size: 450, styleClass: 'ring-style-1', offsetFactor: 0.3 },
-            { size: 220, styleClass: 'ring-style-2', offsetFactor: 0.7 },
-            { size: 110, styleClass: 'ring-style-3', offsetFactor: 1.15 },
-            { size: 65,  styleClass: 'ring-style-4', offsetFactor: 1.45 }
+        const hexDefs = [
+            { size: 280, styleClass: 'hex-style-1', offsetFactor: 0.35 },
+            { size: 160, styleClass: 'hex-style-2', offsetFactor: 0.75 },
+            { size: 90,  styleClass: 'hex-style-3', offsetFactor: 1.1 },
+            { size: 130, styleClass: 'hex-style-4', offsetFactor: 1.4 },
+            { size: 45,  styleClass: 'hex-style-5', offsetFactor: 1.7 }
         ];
 
-        const dynamicRings = [];
-        ringDefs.forEach(def => {
+        const dynamicHexagons = [];
+        hexDefs.forEach(def => {
             const el = document.createElement('div');
-            el.className = `dynamic-flare-ring ${def.styleClass}`;
+            el.className = `cine-hexagon ${def.styleClass}`;
             el.style.width = `${def.size}px`;
             el.style.height = `${def.size}px`;
             flareOverlay.appendChild(el);
-            dynamicRings.push({ el, factor: def.offsetFactor });
+            dynamicHexagons.push({ el, factor: def.offsetFactor });
         });
 
-        // CÁLCULO DE POSICIÓN Y VISIBILIDAD EN TIEMPO REAL
         function updateFlares() {
             if (activeLightHotspots.length > 0) {
                 const screenCenterX = window.innerWidth / 2;
@@ -469,7 +469,6 @@
                     if (light.element && light.element.getBoundingClientRect) {
                         const rect = light.element.getBoundingClientRect();
                         
-                        // Validar visibilidad en viewport
                         if (rect.width > 0 && rect.top >= -150 && rect.left >= -150 && 
                             rect.bottom <= window.innerHeight + 150 && 
                             rect.right <= window.innerWidth + 150) {
@@ -489,23 +488,22 @@
                     const distFromCenter = Math.sqrt(dx * dx + dy * dy);
                     const maxDist = Math.sqrt(screenCenterX * screenCenterX + screenCenterY * screenCenterY);
 
-                    // La intensidad aumenta cuando la luz se acerca al centro o bordes visibles
                     let opacity = 1 - (distFromCenter / (maxDist * 0.95));
                     opacity = Math.max(0, Math.min(1, opacity));
 
-                    dynamicRings.forEach(ring => {
-                        const rx = screenCenterX - dx * ring.factor;
-                        const ry = screenCenterY - dy * ring.factor;
+                    dynamicHexagons.forEach(hex => {
+                        const rx = screenCenterX - dx * hex.factor;
+                        const ry = screenCenterY - dy * hex.factor;
 
-                        ring.el.style.left = `${rx}px`;
-                        ring.el.style.top = `${ry}px`;
-                        ring.el.style.opacity = opacity;
+                        hex.el.style.left = `${rx}px`;
+                        hex.el.style.top = `${ry}px`;
+                        hex.el.style.opacity = opacity;
                     });
                 } else {
-                    dynamicRings.forEach(ring => ring.el.style.opacity = 0);
+                    dynamicHexagons.forEach(hex => hex.el.style.opacity = 0);
                 }
             } else {
-                dynamicRings.forEach(ring => ring.el.style.opacity = 0);
+                dynamicHexagons.forEach(hex => hex.el.style.opacity = 0);
             }
 
             requestAnimationFrame(updateFlares);
@@ -513,7 +511,6 @@
 
         requestAnimationFrame(updateFlares);
 
-        // DESBLOQUEO DE PERMISOS DE MOVIMIENTO (Móviles)
         document.body.addEventListener('click', function() {
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission()
