@@ -128,8 +128,8 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 280px;
-            height: 280px;
+            width: 260px;
+            height: 260px;
             transform: translate(-50%, -50%);
             border-radius: 50%;
             background: radial-gradient(
@@ -145,7 +145,7 @@
         }
 
         /* -------------------------------------------------------------
-           2. DESTELLOS CINEMATOGRÁFICOS HEXAGONALES
+           2. DESTELLOS DE LENTE DINÁMICOS (OCTÁGONOS + CÍRCULOS)
         ------------------------------------------------------------- */
         #flare-overlay {
             position: absolute;
@@ -158,44 +158,56 @@
             overflow: hidden;
         }
 
-        /* Clase base para crear la forma del Hexágono Cinematográfico */
-        .cine-hexagon {
+        /* Clases Base */
+        .flare-element {
             position: absolute;
             pointer-events: none;
             mix-blend-mode: screen;
             transform: translate(-50%, -50%);
             opacity: 0;
             transition: opacity 0.1s linear;
-            /* Máscara geométrica de 6 lados perfectos */
-            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
         }
 
-        /* Hexágono 1: Azul Cian grande de diafragma suave */
-        .hex-style-1 {
-            background: radial-gradient(circle, rgba(0, 242, 254, 0.35) 0%, rgba(0, 180, 255, 0.15) 70%, rgba(0, 242, 254, 0.05) 100%);
-            filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.5));
+        /* Forma Octagonal de 8 vértices */
+        .shape-octagon {
+            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
         }
 
-        /* Hexágono 2: Violeta / Magentoso mediano nítido (Aberración cromática) */
-        .hex-style-2 {
-            background: linear-gradient(135deg, rgba(138, 43, 226, 0.4) 0%, rgba(255, 0, 128, 0.2) 100%);
-            filter: drop-shadow(0 0 5px rgba(138, 43, 226, 0.6));
+        /* Forma Circular */
+        .shape-circle {
+            border-radius: 50%;
         }
 
-        /* Hexágono 3: Azul Intenso pequeño y definido */
-        .hex-style-3 {
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(0, 150, 255, 0.4) 60%, rgba(0, 242, 254, 0.2) 100%);
+        /* --- ESTILOS DE LOS ARTEFACTOS INTERCALADOS --- */
+
+        /* 1. Octágono 1: Cian / Azul estilizado y compacto (Reducido a 140px) */
+        .style-1 {
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.4) 0%, rgba(0, 180, 255, 0.2) 60%, rgba(0, 242, 254, 0.05) 100%);
+            filter: drop-shadow(0 0 6px rgba(0, 242, 254, 0.5));
         }
 
-        /* Hexágono 4: Anillo hueco verde/dorado de recubrimiento óptico */
-        .hex-style-4 {
-            background: radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(50, 205, 50, 0.35) 80%, rgba(255, 215, 0, 0.2) 100%);
-            filter: drop-shadow(0 0 4px rgba(50, 205, 50, 0.4));
+        /* 2. Círculo 1: Anillo Violeta / Magenta nítido */
+        .style-2 {
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.3) 0%, rgba(255, 0, 128, 0.15) 70%, rgba(255, 255, 255, 0) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.4);
         }
 
-        /* Hexágono 5: Micro-destello violeta nítido */
-        .hex-style-5 {
-            background: rgba(186, 85, 211, 0.6);
+        /* 3. Octágono 2: Blanco / Azul brillante de diafragma central */
+        .style-3 {
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(0, 150, 255, 0.35) 70%, rgba(0, 242, 254, 0.1) 100%);
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
+        }
+
+        /* 4. Círculo 2: Anillo Cilíndrico Verde / Dorado de óptica cine */
+        .style-4 {
+            background: radial-gradient(circle, rgba(0,0,0,0) 45%, rgba(50, 205, 50, 0.35) 75%, rgba(255, 215, 0, 0.2) 100%);
+            border: 1px solid rgba(50, 205, 50, 0.4);
+        }
+
+        /* 5. Octágono 3: Micro-destello violeta nítido secundario */
+        .style-5 {
+            background: rgba(186, 85, 211, 0.65);
             filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8));
         }
     </style>
@@ -438,24 +450,24 @@
             document.getElementById('flare-overlay').innerHTML = '';
         });
 
-        // DEFINICIÓN DE HEXÁGONOS CINEMATOGRÁFICOS
+        // SECUENCIA INTERCALADA: OCTÁGONO -> CÍRCULO -> OCTÁGONO -> CÍRCULO...
         const flareOverlay = document.getElementById('flare-overlay');
-        const hexDefs = [
-            { size: 280, styleClass: 'hex-style-1', offsetFactor: 0.35 },
-            { size: 160, styleClass: 'hex-style-2', offsetFactor: 0.75 },
-            { size: 90,  styleClass: 'hex-style-3', offsetFactor: 1.1 },
-            { size: 130, styleClass: 'hex-style-4', offsetFactor: 1.4 },
-            { size: 45,  styleClass: 'hex-style-5', offsetFactor: 1.7 }
+        const flareDefs = [
+            { size: 140, shapeClass: 'shape-octagon', styleClass: 'style-1', offsetFactor: 0.35 },
+            { size: 180, shapeClass: 'shape-circle',  styleClass: 'style-2', offsetFactor: 0.70 },
+            { size: 85,  shapeClass: 'shape-octagon', styleClass: 'style-3', offsetFactor: 1.05 },
+            { size: 130, shapeClass: 'shape-circle',  styleClass: 'style-4', offsetFactor: 1.35 },
+            { size: 40,  shapeClass: 'shape-octagon', styleClass: 'style-5', offsetFactor: 1.65 }
         ];
 
-        const dynamicHexagons = [];
-        hexDefs.forEach(def => {
+        const dynamicFlares = [];
+        flareDefs.forEach(def => {
             const el = document.createElement('div');
-            el.className = `cine-hexagon ${def.styleClass}`;
+            el.className = `flare-element ${def.shapeClass} ${def.styleClass}`;
             el.style.width = `${def.size}px`;
             el.style.height = `${def.size}px`;
             flareOverlay.appendChild(el);
-            dynamicHexagons.push({ el, factor: def.offsetFactor });
+            dynamicFlares.push({ el, factor: def.offsetFactor });
         });
 
         function updateFlares() {
@@ -491,19 +503,19 @@
                     let opacity = 1 - (distFromCenter / (maxDist * 0.95));
                     opacity = Math.max(0, Math.min(1, opacity));
 
-                    dynamicHexagons.forEach(hex => {
-                        const rx = screenCenterX - dx * hex.factor;
-                        const ry = screenCenterY - dy * hex.factor;
+                    dynamicFlares.forEach(item => {
+                        const rx = screenCenterX - dx * item.factor;
+                        const ry = screenCenterY - dy * item.factor;
 
-                        hex.el.style.left = `${rx}px`;
-                        hex.el.style.top = `${ry}px`;
-                        hex.el.style.opacity = opacity;
+                        item.el.style.left = `${rx}px`;
+                        item.el.style.top = `${ry}px`;
+                        item.el.style.opacity = opacity;
                     });
                 } else {
-                    dynamicHexagons.forEach(hex => hex.el.style.opacity = 0);
+                    dynamicFlares.forEach(item => item.el.style.opacity = 0);
                 }
             } else {
-                dynamicHexagons.forEach(hex => hex.el.style.opacity = 0);
+                dynamicFlares.forEach(item => item.el.style.opacity = 0);
             }
 
             requestAnimationFrame(updateFlares);
