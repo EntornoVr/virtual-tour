@@ -115,7 +115,7 @@
         }
 
         /* -------------------------------------------------------------
-           ESTILOS DEL DESTELLO BLANCO ANCLADO EXACTO
+           ESTILOS DEL CENTRO FIJO DE LUZ (HOTSPOT)
         ------------------------------------------------------------- */
         .lens-flare-anchor {
             position: absolute;
@@ -125,50 +125,68 @@
             z-index: 5;
         }
 
-        /* Halo Blanco Difuminado (Centro) */
+        /* Halo Blanco Difuminado (Centro Inmóvil) */
         .flare-halo-white {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 280px;
-            height: 280px;
+            width: 250px;
+            height: 250px;
             transform: translate(-50%, -50%);
             border-radius: 50%;
             background: radial-gradient(
                 circle,
-                rgba(255, 255, 255, 0.95) 0%,
-                rgba(255, 255, 255, 0.6) 20%,
-                rgba(255, 255, 255, 0.2) 50%,
-                rgba(255, 255, 255, 0) 70%
+                rgba(255, 255, 255, 1) 0%,
+                rgba(255, 255, 255, 0.7) 20%,
+                rgba(255, 255, 255, 0.25) 50%,
+                rgba(255, 255, 255, 0) 75%
             );
-            filter: blur(8px);
+            filter: blur(6px);
             pointer-events: none;
             mix-blend-mode: screen;
         }
 
-        /* Anillos secundarios de destello blanco/azulado */
-        .flare-ring {
+        /* -------------------------------------------------------------
+           CONTENEDOR DE ANILLOS Y DESTELLOS DINÁMICOS
+        ------------------------------------------------------------- */
+        #flare-overlay {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 6;
+            overflow: hidden;
+        }
+
+        .dynamic-flare-ring {
+            position: absolute;
             border-radius: 50%;
             pointer-events: none;
             mix-blend-mode: screen;
             transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.1s linear;
         }
 
-        .flare-ring-1 {
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(200, 230, 255, 0.08) 40%, rgba(255, 255, 255, 0) 65%);
-            filter: blur(10px);
+        /* Anillo 1 (Grande suave) */
+        .ring-style-1 {
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.35) 0%, rgba(200, 225, 255, 0.12) 45%, rgba(255, 255, 255, 0) 70%);
+            filter: blur(8px);
         }
 
-        .flare-ring-2 {
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 70%);
+        /* Anillo 2 (Mediano definido) */
+        .ring-style-2 {
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(220, 240, 255, 0.15) 50%, rgba(255, 255, 255, 0) 70%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             filter: blur(3px);
+        }
+
+        /* Anillo 3 (Chico brillante) */
+        .ring-style-3 {
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 80%);
+            filter: blur(2px);
         }
     </style>
 </head>
@@ -179,9 +197,29 @@
     </div>
 
     <div id="panorama"></div>
+    <div id="flare-overlay"></div>
 
     <script>
-        // Función para renderizar los Hotspots de navegación
+        // Arreglo para registrar las luces de la escena activa
+        let activeLightHotspots = [];
+
+        // Renderiza el punto de luz blanco e inmóvil
+        function createFlareElement(hotSpotDiv, args) {
+            hotSpotDiv.classList.add('lens-flare-anchor');
+            
+            const halo = document.createElement('div');
+            halo.className = 'flare-halo-white';
+            hotSpotDiv.appendChild(halo);
+
+            // Guardar referencia para calcular destellos dinámicos
+            activeLightHotspots.push({
+                element: hotSpotDiv,
+                pitch: args.pitch,
+                yaw: args.yaw
+            });
+        }
+
+        // Renderiza los Hotspots de navegación
         function customHotspot(hotspotDiv, args) {
             hotspotDiv.classList.add('custom-hotspot');
             
@@ -195,25 +233,7 @@
             hotspotDiv.appendChild(tooltip);
         }
 
-        // Función para renderizar los destellos de luz blancos anclados
-        function createFlareElement(hotSpotDiv) {
-            hotSpotDiv.classList.add('lens-flare-anchor');
-            
-            const halo = document.createElement('div');
-            halo.className = 'flare-halo-white';
-
-            const ring1 = document.createElement('div');
-            ring1.className = 'flare-ring flare-ring-1';
-
-            const ring2 = document.createElement('div');
-            ring2.className = 'flare-ring flare-ring-2';
-
-            hotSpotDiv.appendChild(halo);
-            hotSpotDiv.appendChild(ring1);
-            hotSpotDiv.appendChild(ring2);
-        }
-
-        // CONFIGURACIÓN DE PANNELLUM (10 ESCENAS COMPLETAS)
+        // CONFIGURACIÓN DE PANNELLUM (10 ESCENAS)
         var viewer = pannellum.viewer('panorama', {
             "default": {
                 "firstScene": "escena1",
@@ -231,23 +251,19 @@
                     "panorama": "P01.jpg",
                     "hotSpots": [
                         { 
-                            "pitch": -5, 
-                            "yaw": 0, 
-                            "type": "scene", 
-                            "sceneId": "escena2",
+                            "pitch": -5, "yaw": 0, "type": "scene", "sceneId": "escena2",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Ir a Entrada", "icon": "fa-arrow-up" }
                         },
-                        /* DESTELLOS DE LUZ ANCLADOS (Puedes modificar pitch/yaw a gusto) */
                         {
-                            "pitch": 25.0,
-                            "yaw": -40.0,
-                            "createTooltipFunc": createFlareElement
+                            "pitch": 25.0, "yaw": -40.0,
+                            "createTooltipFunc": createFlareElement,
+                            "createTooltipArgs": { "pitch": 25.0, "yaw": -40.0 }
                         },
                         {
-                            "pitch": 15.0,
-                            "yaw": 60.0,
-                            "createTooltipFunc": createFlareElement
+                            "pitch": 15.0, "yaw": 60.0,
+                            "createTooltipFunc": createFlareElement,
+                            "createTooltipArgs": { "pitch": 15.0, "yaw": 60.0 }
                         }
                     ]
                 },
@@ -257,25 +273,19 @@
                     "panorama": "02.jpg",
                     "hotSpots": [
                         { 
-                            "pitch": -5, 
-                            "yaw": 180, 
-                            "type": "scene", 
-                            "sceneId": "escena1",
+                            "pitch": -5, "yaw": 180, "type": "scene", "sceneId": "escena1",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Volver a Inicio", "icon": "fa-arrow-down" }
                         },
                         { 
-                            "pitch": -5, 
-                            "yaw": 0, 
-                            "type": "scene", 
-                            "sceneId": "escena3",
+                            "pitch": -5, "yaw": 0, "type": "scene", "sceneId": "escena3",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Ir a Cancha abierta", "icon": "fa-arrow-up" }
                         },
                         {
-                            "pitch": 30.0,
-                            "yaw": 15.0,
-                            "createTooltipFunc": createFlareElement
+                            "pitch": 30.0, "yaw": 15.0,
+                            "createTooltipFunc": createFlareElement,
+                            "createTooltipArgs": { "pitch": 30.0, "yaw": 15.0 }
                         }
                     ]
                 },
@@ -285,25 +295,19 @@
                     "panorama": "03.jpg",
                     "hotSpots": [
                         { 
-                            "pitch": -5, 
-                            "yaw": 180, 
-                            "type": "scene", 
-                            "sceneId": "escena2",
+                            "pitch": -5, "yaw": 180, "type": "scene", "sceneId": "escena2",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Volver a Entrada", "icon": "fa-arrow-down" }
                         },
                         { 
-                            "pitch": -5, 
-                            "yaw": 0, 
-                            "type": "scene", 
-                            "sceneId": "escena4",
+                            "pitch": -5, "yaw": 0, "type": "scene", "sceneId": "escena4",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Ir a Snack", "icon": "fa-arrow-up" }
                         },
                         {
-                            "pitch": 20.0,
-                            "yaw": -60.0,
-                            "createTooltipFunc": createFlareElement
+                            "pitch": 20.0, "yaw": -60.0,
+                            "createTooltipFunc": createFlareElement,
+                            "createTooltipArgs": { "pitch": 20.0, "yaw": -60.0 }
                         }
                     ]
                 },
@@ -313,18 +317,12 @@
                     "panorama": "04.jpg",
                     "hotSpots": [
                         { 
-                            "pitch": -5, 
-                            "yaw": 180, 
-                            "type": "scene", 
-                            "sceneId": "escena3",
+                            "pitch": -5, "yaw": 180, "type": "scene", "sceneId": "escena3",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Volver a Cancha abierta", "icon": "fa-arrow-down" }
                         },
                         { 
-                            "pitch": -5, 
-                            "yaw": 0, 
-                            "type": "scene", 
-                            "sceneId": "escena5",
+                            "pitch": -5, "yaw": 0, "type": "scene", "sceneId": "escena5",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Ir a Canchas cerradas", "icon": "fa-arrow-up" }
                         }
@@ -336,18 +334,12 @@
                     "panorama": "05.jpg",
                     "hotSpots": [
                         { 
-                            "pitch": -5, 
-                            "yaw": 180, 
-                            "type": "scene", 
-                            "sceneId": "escena4",
+                            "pitch": -5, "yaw": 180, "type": "scene", "sceneId": "escena4",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Volver a Snack", "icon": "fa-arrow-down" }
                         },
                         { 
-                            "pitch": -5, 
-                            "yaw": 0, 
-                            "type": "scene", 
-                            "sceneId": "escena6",
+                            "pitch": -5, "yaw": 0, "type": "scene", "sceneId": "escena6",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Ir a Cancha cerrada 1", "icon": "fa-arrow-up" }
                         }
@@ -359,18 +351,12 @@
                     "panorama": "06.jpg",
                     "hotSpots": [
                         { 
-                            "pitch": -5, 
-                            "yaw": 180, 
-                            "type": "scene", 
-                            "sceneId": "escena5",
+                            "pitch": -5, "yaw": 180, "type": "scene", "sceneId": "escena5",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Volver a Canchas cerradas", "icon": "fa-arrow-down" }
                         },
                         { 
-                            "pitch": -5, 
-                            "yaw": 0, 
-                            "type": "scene", 
-                            "sceneId": "escena7",
+                            "pitch": -5, "yaw": 0, "type": "scene", "sceneId": "escena7",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Ir a Entrada al privado", "icon": "fa-arrow-up" }
                         }
@@ -382,18 +368,12 @@
                     "panorama": "07.jpg",
                     "hotSpots": [
                         { 
-                            "pitch": -5, 
-                            "yaw": 180, 
-                            "type": "scene", 
-                            "sceneId": "escena6",
+                            "pitch": -5, "yaw": 180, "type": "scene", "sceneId": "escena6",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Volver a Cancha cerrada 1", "icon": "fa-arrow-down" }
                         },
                         { 
-                            "pitch": -5, 
-                            "yaw": 0, 
-                            "type": "scene", 
-                            "sceneId": "escena8",
+                            "pitch": -5, "yaw": 0, "type": "scene", "sceneId": "escena8",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Ir a Zona Privada Climatizada", "icon": "fa-arrow-up" }
                         }
@@ -405,18 +385,12 @@
                     "panorama": "08.jpg",
                     "hotSpots": [
                         { 
-                            "pitch": -5, 
-                            "yaw": 180, 
-                            "type": "scene", 
-                            "sceneId": "escena7",
+                            "pitch": -5, "yaw": 180, "type": "scene", "sceneId": "escena7",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Volver a Entrada al privado", "icon": "fa-arrow-down" }
                         },
                         { 
-                            "pitch": -5, 
-                            "yaw": 0, 
-                            "type": "scene", 
-                            "sceneId": "escena9",
+                            "pitch": -5, "yaw": 0, "type": "scene", "sceneId": "escena9",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Ir a Baños y Regaderas", "icon": "fa-arrow-up" }
                         }
@@ -428,18 +402,12 @@
                     "panorama": "09.jpg",
                     "hotSpots": [
                         { 
-                            "pitch": -5, 
-                            "yaw": 180, 
-                            "type": "scene", 
-                            "sceneId": "escena8",
+                            "pitch": -5, "yaw": 180, "type": "scene", "sceneId": "escena8",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Volver a Zona Privada", "icon": "fa-arrow-down" }
                         },
                         { 
-                            "pitch": -5, 
-                            "yaw": 0, 
-                            "type": "scene", 
-                            "sceneId": "escena10",
+                            "pitch": -5, "yaw": 0, "type": "scene", "sceneId": "escena10",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Ir a Sport Bar", "icon": "fa-arrow-up" }
                         }
@@ -451,10 +419,7 @@
                     "panorama": "10.jpg",
                     "hotSpots": [
                         { 
-                            "pitch": -5, 
-                            "yaw": 180, 
-                            "type": "scene", 
-                            "sceneId": "escena9",
+                            "pitch": -5, "yaw": 180, "type": "scene", "sceneId": "escena9",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Volver a Baños y Regaderas", "icon": "fa-arrow-down" }
                         }
@@ -463,7 +428,92 @@
             }
         });
 
-        // DESBLOQUEO DE PERMISOS DE MOVIMIENTO AL PRIMER TOQUE (Para celulares)
+        // Limpiar registro de luces al cambiar de escena
+        viewer.on('scenechange', function() {
+            activeLightHotspots = [];
+            document.getElementById('flare-overlay').innerHTML = '';
+        });
+
+        // CREACIÓN Y CÁLCULO DINÁMICO DE ANILLOS DE LENTE
+        const flareOverlay = document.getElementById('flare-overlay');
+        const ringDefs = [
+            { size: 400, styleClass: 'ring-style-1', offsetFactor: 0.4 },
+            { size: 180, styleClass: 'ring-style-2', offsetFactor: 0.85 },
+            { size: 90,  styleClass: 'ring-style-3', offsetFactor: 1.3 }
+        ];
+
+        // Crear elementos DOM para los anillos dinámicos
+        const dynamicRings = [];
+        ringDefs.forEach(def => {
+            const el = document.createElement('div');
+            el.className = `dynamic-flare-ring ${def.styleClass}`;
+            el.style.width = `${def.size}px`;
+            el.style.height = `${def.size}px`;
+            flareOverlay.appendChild(el);
+            dynamicRings.push({ el, factor: def.offsetFactor });
+        });
+
+        // Bucle de animación para proyectar los destellos
+        function updateFlares() {
+            if (activeLightHotspots.length > 0) {
+                const screenCenterX = window.innerWidth / 2;
+                const screenCenterY = window.innerHeight / 2;
+                
+                // Usamos la primera luz activa visible para calcular el vector del lente
+                let primaryLightScreenPos = null;
+
+                for (let light of activeLightHotspots) {
+                    if (light.element && light.element.getBoundingClientRect) {
+                        const rect = light.element.getBoundingClientRect();
+                        // Verificar si está dentro del visor visible
+                        if (rect.width > 0 && rect.top >= -100 && rect.left >= -100 && 
+                            rect.bottom <= window.innerHeight + 100 && 
+                            rect.right <= window.innerWidth + 100) {
+                            
+                            primaryLightScreenPos = {
+                                x: rect.left + rect.width / 2,
+                                y: rect.top + rect.height / 2
+                            };
+                            break;
+                        }
+                    }
+                }
+
+                if (primaryLightScreenPos) {
+                    // Vector del centro de pantalla a la luz
+                    const dx = primaryLightScreenPos.x - screenCenterX;
+                    const dy = primaryLightScreenPos.y - screenCenterY;
+                    const distFromCenter = Math.sqrt(dx * dx + dy * dy);
+                    const maxDist = Math.sqrt(screenCenterX * screenCenterX + screenCenterY * screenCenterY);
+
+                    // Opacidad basada en la cercanía
+                    let opacity = 1 - (distFromCenter / (maxDist * 0.9));
+                    opacity = Math.max(0, Math.min(1, opacity));
+
+                    // Posicionar los anillos secundarios a lo largo del eje óptico
+                    dynamicRings.forEach(ring => {
+                        const rx = screenCenterX - dx * ring.factor;
+                        const ry = screenCenterY - dy * ring.factor;
+
+                        ring.el.style.left = `${rx}px`;
+                        ring.el.style.top = `${ry}px`;
+                        ring.el.style.opacity = opacity;
+                    });
+                } else {
+                    // Si no hay luz visible, ocultar anillos
+                    dynamicRings.forEach(ring => ring.el.style.opacity = 0);
+                }
+            } else {
+                dynamicRings.forEach(ring => ring.el.style.opacity = 0);
+            }
+
+            requestAnimationFrame(updateFlares);
+        }
+
+        // Iniciar ciclo de renderizado
+        requestAnimationFrame(updateFlares);
+
+        // DESBLOQUEO DE PERMISOS DE MOVIMIENTO AL PRIMER TOQUE (Móviles)
         document.body.addEventListener('click', function() {
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission()
