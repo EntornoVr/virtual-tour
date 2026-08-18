@@ -114,72 +114,61 @@
             opacity: 1;
         }
 
-        /* --- ESTILOS DE SUN & LENS FLARE EFFECT --- */
-        #flare-container {
+        /* -------------------------------------------------------------
+           ESTILOS DEL DESTELLO BLANCO ANCLADO EXACTO
+        ------------------------------------------------------------- */
+        .lens-flare-anchor {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none; /* Permite interactuar sin interferir con el touch o giroscopio */
-            z-index: 5;
-            display: none;
-        }
-
-        .sun-glare {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            margin-left: -150px;
-            margin-top: -150px;
-            background: radial-gradient(circle, rgba(255,255,240,0.9) 0%, rgba(255,220,130,0.5) 30%, rgba(255,180,50,0.15) 60%, rgba(255,255,255,0) 100%);
-            border-radius: 50%;
-            mix-blend-mode: screen;
-            will-change: transform;
-        }
-
-        .flare-element {
-            position: absolute;
-            border-radius: 50%;
-            mix-blend-mode: screen;
+            width: 1px;
+            height: 1px;
             pointer-events: none;
-            will-change: transform;
+            z-index: 5;
         }
 
-        .flare-polygon {
+        /* Halo Blanco Difuminado (Centro) */
+        .flare-halo-white {
             position: absolute;
-            width: 65px;
-            height: 65px;
-            margin-left: -32.5px;
-            margin-top: -32.5px;
-            background: rgba(255, 200, 150, 0.4);
-            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+            top: 50%;
+            left: 50%;
+            width: 280px;
+            height: 280px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: radial-gradient(
+                circle,
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(255, 255, 255, 0.6) 20%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0) 70%
+            );
+            filter: blur(8px);
+            pointer-events: none;
             mix-blend-mode: screen;
-            will-change: transform;
+        }
+
+        /* Anillos secundarios de destello blanco/azulado */
+        .flare-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            transform: translate(-50%, -50%);
         }
 
         .flare-ring-1 {
-            width: 130px;
-            height: 130px;
-            margin-left: -65px;
-            margin-top: -65px;
-            background: radial-gradient(circle, transparent 40%, rgba(100, 200, 255, 0.35) 60%, transparent 70%);
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(200, 230, 255, 0.08) 40%, rgba(255, 255, 255, 0) 65%);
+            filter: blur(10px);
         }
 
         .flare-ring-2 {
-            width: 50px;
-            height: 50px;
-            margin-left: -25px;
-            margin-top: -25px;
-            background: radial-gradient(circle, rgba(255,100,100,0.45) 0%, rgba(255,200,50,0.25) 80%, transparent 100%);
-        }
-
-        .flare-ring-3 {
             width: 100px;
             height: 100px;
-            margin-left: -50px;
-            margin-top: -50px;
-            background: radial-gradient(circle, rgba(130, 255, 170, 0.3) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 70%);
+            filter: blur(3px);
         }
     </style>
 </head>
@@ -189,18 +178,10 @@
         <h1>PRIME PADEL</h1>
     </div>
 
-    <div id="panorama">
-        <!-- CAPA DE ELEMENTOS LENS FLARE -->
-        <div id="flare-container">
-            <div id="sun-glare" class="sun-glare"></div>
-            <div id="flare1" class="flare-polygon"></div>
-            <div id="flare2" class="flare-element flare-ring-1"></div>
-            <div id="flare3" class="flare-element flare-ring-2"></div>
-            <div id="flare4" class="flare-element flare-ring-3"></div>
-        </div>
-    </div>
+    <div id="panorama"></div>
 
     <script>
+        // Función para renderizar los Hotspots de navegación
         function customHotspot(hotspotDiv, args) {
             hotspotDiv.classList.add('custom-hotspot');
             
@@ -214,7 +195,25 @@
             hotspotDiv.appendChild(tooltip);
         }
 
-        // CONFIGURACIÓN DE PANNELLUM
+        // Función para renderizar los destellos de luz blancos anclados
+        function createFlareElement(hotSpotDiv) {
+            hotSpotDiv.classList.add('lens-flare-anchor');
+            
+            const halo = document.createElement('div');
+            halo.className = 'flare-halo-white';
+
+            const ring1 = document.createElement('div');
+            ring1.className = 'flare-ring flare-ring-1';
+
+            const ring2 = document.createElement('div');
+            ring2.className = 'flare-ring flare-ring-2';
+
+            hotSpotDiv.appendChild(halo);
+            hotSpotDiv.appendChild(ring1);
+            hotSpotDiv.appendChild(ring2);
+        }
+
+        // CONFIGURACIÓN DE PANNELLUM (10 ESCENAS COMPLETAS)
         var viewer = pannellum.viewer('panorama', {
             "default": {
                 "firstScene": "escena1",
@@ -222,7 +221,7 @@
                 "sceneFadeDuration": 1000,
                 "autoLoad": true,
                 "motionControls": true,
-                "orientationOnByDefault": true /* <-- Acelerómetro activo por defecto */
+                "orientationOnByDefault": true
             },
 
             "scenes": {
@@ -230,8 +229,6 @@
                     "title": "Pista Central - Inicio",
                     "type": "equirectangular",
                     "panorama": "P01.jpg",
-                    "sunPitch": 40.0,
-                    "sunYaw": 40.0,
                     "hotSpots": [
                         { 
                             "pitch": -5, 
@@ -240,6 +237,17 @@
                             "sceneId": "escena2",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Ir a Entrada", "icon": "fa-arrow-up" }
+                        },
+                        /* DESTELLOS DE LUZ ANCLADOS (Puedes modificar pitch/yaw a gusto) */
+                        {
+                            "pitch": 25.0,
+                            "yaw": -40.0,
+                            "createTooltipFunc": createFlareElement
+                        },
+                        {
+                            "pitch": 15.0,
+                            "yaw": 60.0,
+                            "createTooltipFunc": createFlareElement
                         }
                     ]
                 },
@@ -247,8 +255,6 @@
                     "title": "Entrada",
                     "type": "equirectangular",
                     "panorama": "02.jpg",
-                    "sunPitch": 30.0,
-                    "sunYaw": 15.0,
                     "hotSpots": [
                         { 
                             "pitch": -5, 
@@ -265,6 +271,11 @@
                             "sceneId": "escena3",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Ir a Cancha abierta", "icon": "fa-arrow-up" }
+                        },
+                        {
+                            "pitch": 30.0,
+                            "yaw": 15.0,
+                            "createTooltipFunc": createFlareElement
                         }
                     ]
                 },
@@ -272,8 +283,6 @@
                     "title": "Cancha abierta",
                     "type": "equirectangular",
                     "panorama": "03.jpg",
-                    "sunPitch": 20.0,
-                    "sunYaw": -60.0,
                     "hotSpots": [
                         { 
                             "pitch": -5, 
@@ -290,6 +299,11 @@
                             "sceneId": "escena4",
                             "createTooltipFunc": customHotspot,
                             "createTooltipArgs": { "text": "Ir a Snack", "icon": "fa-arrow-up" }
+                        },
+                        {
+                            "pitch": 20.0,
+                            "yaw": -60.0,
+                            "createTooltipFunc": createFlareElement
                         }
                     ]
                 },
@@ -449,99 +463,7 @@
             }
         });
 
-        // LÓGICA DE CÁLCULO Y RENDERIZADO CONTINUO DEL LENS FLARE
-        const flareContainer = document.getElementById('flare-container');
-        const sunGlare = document.getElementById('sun-glare');
-        const flare1 = document.getElementById('flare1');
-        const flare2 = document.getElementById('flare2');
-        const flare3 = document.getElementById('flare3');
-        const flare4 = document.getElementById('flare4');
-
-        function pitchYawToScreenCoords(pitch, yaw) {
-            const hfov = viewer.getHfov();
-            const vfov = viewer.getVfov ? viewer.getVfov() : (hfov * (window.innerHeight / window.innerWidth));
-            const currentPitch = viewer.getPitch();
-            const currentYaw = viewer.getYaw();
-
-            let dYaw = yaw - currentYaw;
-            while (dYaw > 180) dYaw -= 360;
-            while (dYaw < -180) dYaw += 360;
-
-            let dPitch = pitch - currentPitch;
-
-            if (Math.abs(dYaw) > hfov / 1.5 || Math.abs(dPitch) > vfov / 1.5) {
-                return null;
-            }
-
-            const screenWidth = window.innerWidth;
-            const screenHeight = window.innerHeight;
-
-            const x = screenWidth / 2 + (dYaw / hfov) * screenWidth;
-            const y = screenHeight / 2 - (dPitch / vfov) * screenHeight;
-
-            return { x, y };
-        }
-
-        function updateLensFlare() {
-            const currentSceneId = viewer.getScene();
-            
-            if (!currentSceneId) return;
-
-            const sceneConfig = viewer.getConfig().scenes[currentSceneId];
-
-            // Si la escena actual no tiene coordenadas de sol configuradas, ocultar el efecto
-            if (!sceneConfig || sceneConfig.sunPitch === undefined || sceneConfig.sunYaw === undefined) {
-                flareContainer.style.display = 'none';
-                return;
-            }
-
-            const sunPos = pitchYawToScreenCoords(sceneConfig.sunPitch, sceneConfig.sunYaw);
-
-            if (!sunPos || sunPos.x < 0 || sunPos.x > window.innerWidth || sunPos.y < 0 || sunPos.y > window.innerHeight) {
-                flareContainer.style.display = 'none';
-                return;
-            }
-
-            flareContainer.style.display = 'block';
-
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-
-            const dx = sunPos.x - centerX;
-            const dy = sunPos.y - centerY;
-            const distToCenter = Math.sqrt(dx * dx + dy * dy);
-            const maxDist = Math.sqrt(centerX * centerX + centerY * centerY);
-            
-            const centerFactor = 1 - Math.min(distToCenter / maxDist, 1);
-
-            sunGlare.style.transform = `translate3d(${sunPos.x}px, ${sunPos.y}px, 0)`;
-            sunGlare.style.opacity = 0.4 + (centerFactor * 0.6);
-
-            function placeElement(elem, factor, scale = 1) {
-                const posX = centerX - dx * factor;
-                const posY = centerY - dy * factor;
-                elem.style.transform = `translate3d(${posX}px, ${posY}px, 0) scale(${scale + centerFactor * 0.3})`;
-                elem.style.opacity = centerFactor * 0.85;
-            }
-
-            placeElement(flare1, 0.3, 1.0);  
-            placeElement(flare2, 0.65, 1.2); 
-            placeElement(flare3, -0.4, 0.85); 
-            placeElement(flare4, 1.15, 1.4);  
-        }
-
-        // BUCLE CONTINUO DE RENDERIZADO (Sincronizado con giroscopio / acelerómetro)
-        function animateFlare() {
-            updateLensFlare();
-            requestAnimationFrame(animateFlare);
-        }
-
-        // Iniciar el ciclo de animación una vez cargado el visor
-        viewer.on('load', function() {
-            requestAnimationFrame(animateFlare);
-        });
-
-        // DESBLOQUEO DE PERMISOS DE MOVIMIENTO AL PRIMER TOQUE (Requerido para celulares)
+        // DESBLOQUEO DE PERMISOS DE MOVIMIENTO AL PRIMER TOQUE (Para celulares)
         document.body.addEventListener('click', function() {
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission()
