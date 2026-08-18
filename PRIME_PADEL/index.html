@@ -180,17 +180,17 @@
 
         /* --- ESTILOS DE LOS ARTEFACTOS INTERCALADOS --- */
 
-        /* 1. Octágono 1: Cian / Azul estilizado y compacto (Reducido a 140px) */
+        /* 1. Octágono 1: Cian / Azul estilizado y compacto (140px) */
         .style-1 {
             background: radial-gradient(circle, rgba(0, 242, 254, 0.4) 0%, rgba(0, 180, 255, 0.2) 60%, rgba(0, 242, 254, 0.05) 100%);
             filter: drop-shadow(0 0 6px rgba(0, 242, 254, 0.5));
         }
 
-        /* 2. Círculo 1: Anillo Violeta / Magenta nítido */
+        /* 2. Círculo 1: Anillo Violeta / Magenta suave y difuminado */
         .style-2 {
-            background: radial-gradient(circle, rgba(138, 43, 226, 0.3) 0%, rgba(255, 0, 128, 0.15) 70%, rgba(255, 255, 255, 0) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 10px rgba(138, 43, 226, 0.4);
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.35) 0%, rgba(255, 0, 128, 0.15) 55%, rgba(138, 43, 226, 0.05) 80%, rgba(255, 255, 255, 0) 100%);
+            box-shadow: 0 0 12px rgba(138, 43, 226, 0.3);
+            filter: blur(1px);
         }
 
         /* 3. Octágono 2: Blanco / Azul brillante de diafragma central */
@@ -227,14 +227,20 @@
         function createFlareElement(hotSpotDiv, args) {
             hotSpotDiv.classList.add('lens-flare-anchor');
             
+            // Valor de atenuación por defecto (si no se define en la escena, toma 1.0 = 100%)
+            const attenuation = (args.attenuation !== undefined) ? args.attenuation : 1.0;
+
             const halo = document.createElement('div');
             halo.className = 'flare-halo-white';
+            // Aplicamos la atenuación al halo central
+            halo.style.opacity = attenuation;
             hotSpotDiv.appendChild(halo);
 
             activeLightHotspots.push({
                 element: hotSpotDiv,
                 pitch: args.pitch,
-                yaw: args.yaw
+                yaw: args.yaw,
+                attenuation: attenuation
             });
         }
 
@@ -275,12 +281,12 @@
                         {
                             "pitch": 25.0, "yaw": -40.0,
                             "createTooltipFunc": createFlareElement,
-                            "createTooltipArgs": { "pitch": 25.0, "yaw": -40.0 }
+                            "createTooltipArgs": { "pitch": 25.0, "yaw": -40.0, "attenuation": 0.4 } // <--- Luz suave (40%)
                         },
                         {
                             "pitch": 15.0, "yaw": 60.0,
                             "createTooltipFunc": createFlareElement,
-                            "createTooltipArgs": { "pitch": 15.0, "yaw": 60.0 }
+                            "createTooltipArgs": { "pitch": 15.0, "yaw": 60.0, "attenuation": 1.0 } // <--- Luz potente (100%)
                         }
                     ]
                 },
@@ -302,7 +308,7 @@
                         {
                             "pitch": 30.0, "yaw": 15.0,
                             "createTooltipFunc": createFlareElement,
-                            "createTooltipArgs": { "pitch": 30.0, "yaw": 15.0 }
+                            "createTooltipArgs": { "pitch": 30.0, "yaw": 15.0, "attenuation": 0.6 } // <--- Luz media (60%)
                         }
                     ]
                 },
@@ -324,7 +330,7 @@
                         {
                             "pitch": 20.0, "yaw": -60.0,
                             "createTooltipFunc": createFlareElement,
-                            "createTooltipArgs": { "pitch": 20.0, "yaw": -60.0 }
+                            "createTooltipArgs": { "pitch": 20.0, "yaw": -60.0, "attenuation": 0.5 }
                         }
                     ]
                 },
@@ -475,7 +481,7 @@
                 const screenCenterX = window.innerWidth / 2;
                 const screenCenterY = window.innerHeight / 2;
                 
-                let primaryLightScreenPos = null;
+                let primaryLight = null;
 
                 for (let light of activeLightHotspots) {
                     if (light.element && light.element.getBoundingClientRect) {
@@ -485,23 +491,25 @@
                             rect.bottom <= window.innerHeight + 150 && 
                             rect.right <= window.innerWidth + 150) {
                             
-                            primaryLightScreenPos = {
+                            primaryLight = {
                                 x: rect.left + rect.width / 2,
-                                y: rect.top + rect.height / 2
+                                y: rect.top + rect.height / 2,
+                                attenuation: light.attenuation
                             };
                             break;
                         }
                     }
                 }
 
-                if (primaryLightScreenPos) {
-                    const dx = primaryLightScreenPos.x - screenCenterX;
-                    const dy = primaryLightScreenPos.y - screenCenterY;
+                if (primaryLight) {
+                    const dx = primaryLight.x - screenCenterX;
+                    const dy = primaryLight.y - screenCenterY;
                     const distFromCenter = Math.sqrt(dx * dx + dy * dy);
                     const maxDist = Math.sqrt(screenCenterX * screenCenterX + screenCenterY * screenCenterY);
 
+                    // Calculamos la opacidad base por distancia y la multiplicamos por el factor "attenuation" de ese punto
                     let opacity = 1 - (distFromCenter / (maxDist * 0.95));
-                    opacity = Math.max(0, Math.min(1, opacity));
+                    opacity = Math.max(0, Math.min(1, opacity)) * primaryLight.attenuation;
 
                     dynamicFlares.forEach(item => {
                         const rx = screenCenterX - dx * item.factor;
